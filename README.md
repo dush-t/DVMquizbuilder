@@ -1,5 +1,5 @@
 # DVMquizbuilder
-A quiz building app for APOGEE 2019 at BITS Pilani
+A quiz building app, built on Django 2.1.5, for APOGEE 2019 at BITS Pilani
 
 ### How to setup google login - 
 For social login, we are using django-allauth. Assuming you already have your project credentials set up, to setup the api with django do the following - 
