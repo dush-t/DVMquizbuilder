@@ -40,6 +40,6 @@ class Answer(models.Model):
 
 class Response(models.Model):
     member = models.ForeignKey(Member, related_name="full_response", on_delete=models.CASCADE, blank=True)
-    question = models.OneToOneField(Question, related_name="ques_response", on_delete=models.CASCADE, null=True)
-    answer_mcq = models.OneToOneField(Answer, related_name='ans_response', on_delete=models.CASCADE, null=True)
+    question = models.ForeignKey(Question, related_name="ques_response", on_delete=models.CASCADE, null=True)
+    answer_mcq = models.ForeignKey(Answer, related_name='ans_response', on_delete=models.CASCADE, null=True)
     answer_text = models.CharField(max_length=250, blank=True)
