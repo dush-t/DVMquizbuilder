@@ -12,7 +12,9 @@ quiz_id = ""
 
 def instructions(request, quizkey):
     global quiz_id
+    print(quiz_id)
     quiz_id = quizkey
+    print(quiz_id)
     return render(request, 'base/instructions.html')
 
 
@@ -24,16 +26,15 @@ def index(request):
 #         try:
 #             question
 
-def get_question(request, question_key):
-    global quiz_id
+def get_question(request, quiz_id, question_key):
     current_quiz = Quiz.objects.get(quiz_id=quiz_id)
-    Questions = Quiz.question.all()
-    current_question = Questions.objects.get(questionkey=question_key)
+    Questions = current_quiz.questions.all()
+    current_question = Questions.get(questionkey=question_key)
 
     if current_question.is_mcq == True:
         answerlist = []
-        for answer in current_question.answer.all():
-            answerlist.append(answer)
+        for answer in current_question.answers.all():
+            answerlist.append(answer.content)
         data = {
             "question":current_question.content,
             "answers":answerlist,

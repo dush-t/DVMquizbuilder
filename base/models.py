@@ -10,9 +10,11 @@ class Member(models.Model):
 
 class Quiz(models.Model):
     quiz_id = models.CharField(max_length=30)
+    def __str__(self):
+        return self.quiz_id
 
 class Question(models.Model):
-    quiz = models.ForeignKey(Quiz, related_name='question')
+    parent_quiz = models.ForeignKey(Quiz, related_name='questions', on_delete=models.CASCADE, null=True)
     questionkey = models.IntegerField(default=0, unique=False)
     content = models.TextField()
     answer = models.CharField(max_length=50)
@@ -24,7 +26,7 @@ class Question(models.Model):
         return self.content 
 
 class Answer(models.Model):
-    question = models.ForeignKey(Question, related_name='answer')
+    parent_question = models.ForeignKey(Question, related_name='answers', on_delete=models.CASCADE)
     content = models.TextField()
     is_correct = models.BooleanField(default=False)
 
