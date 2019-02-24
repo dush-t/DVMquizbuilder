@@ -25,7 +25,7 @@ def add_to_review(request, queskey):
 
 
 def store_answer(request):
-    current_member = Member.objects.get(user=current_user)
+    current_member = Member.objects.get(user=request.user)
     if request.method == 'POST':
         queskey = request.POST.get("queskey")
         question = Question.objects.get(questionkey=queskey)
