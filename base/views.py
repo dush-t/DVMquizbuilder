@@ -1,4 +1,4 @@
-from .models import Member, Quiz, Question, Answer
+from .models import Member, Question, Answer
 
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -8,13 +8,7 @@ from django.http import HttpResponse, JsonResponse
 import re
 
 
-quiz_id = ""
-
-def instructions(request, quizkey):
-    global quiz_id
-    print(quiz_id)
-    quiz_id = quizkey
-    print(quiz_id)
+def instructions(request):
     return render(request, 'base/instructions.html')
 
 
@@ -26,10 +20,8 @@ def index(request):
 #         try:
 #             question
 
-def get_question(request, quiz_id, question_key):
-    current_quiz = Quiz.objects.get(quiz_id=quiz_id)
-    Questions = current_quiz.questions.all()
-    current_question = Questions.get(questionkey=question_key)
+def get_question(request, question_key):
+    current_question = Question.objects.get(questionkey=question_key)
 
     if current_question.is_mcq == True:
         answerlist = []

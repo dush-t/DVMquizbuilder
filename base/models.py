@@ -8,13 +8,8 @@ class Member(models.Model):
     user = models.OneToOneField(User, unique=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
 
-class Quiz(models.Model):
-    quiz_id = models.CharField(max_length=30)
-    def __str__(self):
-        return self.quiz_id
 
 class Question(models.Model):
-    parent_quiz = models.ForeignKey(Quiz, related_name='questions', on_delete=models.CASCADE, null=True)
     questionkey = models.IntegerField(default=0, unique=False)
     content = models.TextField()
     answer = models.CharField(max_length=50)
