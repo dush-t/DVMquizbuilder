@@ -139,7 +139,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 LOGIN_REDIRECT_URL = '/'
 SITE_ID = 1
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 SOCIALACCOUNT_PROVIDERS = { 'google': 
                              { 'SCOPE': ['email', 'profile'],
                                'AUTH_PARAMS': { 'access_type': 'online' }
