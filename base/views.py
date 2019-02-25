@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponse, JsonResponse
 import re
+import datetime
 
 #It is better to pass questions as template context
 
@@ -89,7 +90,19 @@ def get_question(request, queskey):
         }
         return JsonResponse(data)
         
+def get_time_remaining(request):
 
+    current_member = request.user
+    start_time = current_member.start_time
+    quiz_time = datetime.timedelta(hours = 1, minutes = 0)
+    end_time = start_time + quiz_time
+    time_remaining = end_time - datetime.datetime.now() # A datetime.timdelta object
+
+    data = {
+        "time_remaining":time_remaining,
+    }
+
+    return JsonResponse(data)
 
 #def check_answer(request):
 #     member = Member.objects.get(user=request.user)

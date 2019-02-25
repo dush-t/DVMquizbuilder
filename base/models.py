@@ -8,7 +8,7 @@ class Member(models.Model):
     user = models.OneToOneField(User, unique=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     score = models.IntegerField(default=0)
-
+    start_time = models.DateTimeField(null=True) # As this app will be used for only one quiz.
 
 class Question(models.Model):
     questionkey = models.IntegerField(default=0, unique=False)
