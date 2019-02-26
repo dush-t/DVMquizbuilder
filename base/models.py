@@ -9,6 +9,7 @@ class Member(models.Model):
     name = models.CharField(max_length=50)
     score = models.IntegerField(default=0)
     start_time = models.DateTimeField(null=True) # As this app will be used for only one quiz.
+    submitted = models.BooleanField(default=False) #Will be set to true if the member has submitted his/her test. Once true, the member cannot access the same test
 
 class Question(models.Model):
     questionkey = models.IntegerField(default=0, unique=False)

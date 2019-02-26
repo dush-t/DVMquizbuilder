@@ -17,6 +17,13 @@ def instructions(request):
 def index(request):
     return render(request, 'base/index.html')
 
+def sign_in(request):
+    if request.user.is_anonymous:
+        return render(request, 'base/sign_in.html')
+    else:
+        return redirect('/')
+        
+@login_required(login_url='/sign_in')
 def add_to_review(request, queskey):
     current_member = Member.objects.get(user = request.user)
     question = Question.objects.get(questionkey=queskey)
@@ -24,7 +31,7 @@ def add_to_review(request, queskey):
     return HttpResponse("Question marked for review") #This needs to be changed later
 
 
-
+@login_required(login_url='/sign_in')
 def store_answer(request):
     current_member = Member.objects.get(user=request.user)
     if request.method == 'POST':
@@ -51,25 +58,37 @@ def store_answer(request):
                 a = Response(member=current_member, question=question, answer_text=answer)
                 a.save() 
 
+@login_required(login_url='/sign_in')
 def result(request):
     current_member = Member.objects.get(user=request.user)
     full_response = current_member.full_response.all()
-    for response in full_response:
-        question = response.question
-        try:
-            if reponse.answer_mcq.is_correct:
-                current_member.score = current_member.score + question.score_increment
-            else:
-                current_member.score = current_member.score - question.score_decrement
-        except:
-            if response.answer_text == question.answer:
-                current_member.score = current_member.score + question.score_increment
-            else:
-                current_member.score = current_member.score - question.score_decrement
+    if current_member.submitted:
+        for response in full_response:
+            question = response.question
+            try:
+                if reponse.answer_mcq.is_correct:
+                    current_member.score = current_member.score + question.score_increment
+                else:
+                    current_member.score = current_member.score - question.score_decrement
+            except:
+                if response.answer_text == question.answer:
+                    current_member.score = current_member.score + question.score_increment
+                else:
+                    current_member.score = current_member.score - question.score_decrement
+        return render(request, 'base/result.html')
+    else:
+        return render(request, 'base/result.html')
 
-    return render(request, 'base/result.html')
+@login_required(login_url='/sign_in')
+def get_score(request):
+    current_member = Member.objects.get(user=request.user)
+    if current_member.submitted:
+        data = {"score":current_member.score}
+        return JsonResponse(data)
+    else:
+        return HttpResponse("The user needs to submit first")
 
-
+@login_required(login_url='/sign_in')
 def get_question(request, queskey):
     current_question = Question.objects.get(questionkey=queskey)
 
