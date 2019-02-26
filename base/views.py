@@ -58,6 +58,16 @@ def store_answer(request):
                 a = Response(member=current_member, question=question, answer_text=answer)
                 a.save() 
 
+def leaderboard(request):
+    leaderboard = Member.objects.order_by('-score')
+    ranklist=[]
+    for member in leaderboard:
+        ranklist.append(member.name)
+    data = {
+        "ranklist":ranklist
+    }
+    return JsonResponse(data)
+
 @login_required(login_url='/sign_in')
 def result(request):
     current_member = Member.objects.get(user=request.user)

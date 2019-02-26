@@ -8,5 +8,6 @@ urlpatterns = [
     path("instructions", views.instructions, name="instructions"),
     path("get_question/<int:queskey>", views.get_question, name="get_question"),
     path("get_score", views.get_score, name="get_score"),
-    path("get_time_remaining", views.get_time_remaining, name="get_time_remaining")
+    path("get_time_remaining", views.get_time_remaining, name="get_time_remaining"),
+    path("leaderboard", views.leaderboard, name="leaderboard")
 ]

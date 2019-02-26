@@ -11,6 +11,9 @@ class Member(models.Model):
     start_time = models.DateTimeField(null=True) # As this app will be used for only one quiz.
     submitted = models.BooleanField(default=False) #Will be set to true if the member has submitted his/her test. Once true, the member cannot access the same test
 
+    def __str__(self):
+        return self.name
+
 class Question(models.Model):
 #Question content --
     questionkey = models.IntegerField(default=0, unique=False)
