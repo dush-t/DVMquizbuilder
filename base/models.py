@@ -12,16 +12,18 @@ class Member(models.Model):
     submitted = models.BooleanField(default=False) #Will be set to true if the member has submitted his/her test. Once true, the member cannot access the same test
 
 class Question(models.Model):
+#Question content --
     questionkey = models.IntegerField(default=0, unique=False)
     content = models.TextField()
+    image = models.ImageField(upload_to='ques_img', null=True, blank=True)
     answer = models.CharField(max_length=50)
-
+#Question status --
     attempted_by = models.ManyToManyField(Member, related_name='questions_attempted', blank=True)
     review_by = models.ManyToManyField(Member, related_name='marked_for_review', blank=True)
     answered_right = models.ManyToManyField(Member, related_name='ans_correctly', blank=True)
     answered_wrong = models.ManyToManyField(Member, related_name="ans_wrongly", blank=True)
     not_attempted_by = models.ManyToManyField(Member, related_name='not_attempted', blank=True)
-
+#Question properties -- 
     score_increment = models.IntegerField(default=10)
     score_decrement = models.IntegerField(default=0)  #For negative marking
     is_image = models.BooleanField(default=False)

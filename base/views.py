@@ -88,18 +88,22 @@ def get_score(request):
     else:
         return HttpResponse("The user needs to submit first")
 
-@login_required(login_url='/sign_in')
+#@login_required(login_url='/sign_in')
 def get_question(request, queskey):
     current_question = Question.objects.get(questionkey=queskey)
 
     if current_question.is_mcq == True:
         answerlist = []
+        keylist = []
         for answer in current_question.answers.all():
             answerlist.append(answer.content)
+            keylist.append(answer.key)
         data = {
             "question":current_question.content,
             "answers":answerlist,
-            "mcq_flag":True
+            "keys":keylist,
+            "mcq_flag":True,
+            "image_flag":current_question.is_image
         }
         return JsonResponse(data)
     else:
