@@ -3,12 +3,16 @@ from .models import Member, Question, Answer, Response
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.http import HttpResponse, JsonResponse
 import re
 import datetime
 
 #It is better to pass questions as template context
+
+def test(request):
+    return render(request, 'base/reponse.html')
 
 def instructions(request):
     return render(request, 'base/instructions.html')
@@ -30,9 +34,9 @@ def add_to_review(request, queskey):
     current_member.marked_for_review.add(question)
     return HttpResponse("Question marked for review") #This needs to be changed later
 
-
-@login_required(login_url='/sign_in')
-def store_answer(request):
+@csrf_exempt
+#@login_required(login_url='/sign_in')
+def store_response(request):
     current_member = Member.objects.get(user=request.user)
     if request.method == 'POST':
         queskey = request.POST.get("queskey")
@@ -57,6 +61,7 @@ def store_answer(request):
             except:
                 a = Response(member=current_member, question=question, answer_text=answer)
                 a.save() 
+        return HttpResponse("Answer stored")
 
 def leaderboard(request):
     leaderboard = Member.objects.order_by('-score')

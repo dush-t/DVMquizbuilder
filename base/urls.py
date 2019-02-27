@@ -9,5 +9,9 @@ urlpatterns = [
     path("get_question/<int:queskey>", views.get_question, name="get_question"),
     path("get_score", views.get_score, name="get_score"),
     path("get_time_remaining", views.get_time_remaining, name="get_time_remaining"),
-    path("leaderboard", views.leaderboard, name="leaderboard")
+    path("leaderboard", views.leaderboard, name="leaderboard"),
+    path("sign_in", views.sign_in, name="sign_in"),
+    path("store_response", views.store_response, name="store_response"),
+    path("test", views.test, name="test"),
+    path("atr/<int:queskey>", views.add_to_review, name="add_to_review")
 ]
