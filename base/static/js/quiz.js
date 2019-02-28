@@ -6,6 +6,9 @@ function questionDisplay(content){
     newElement.innerHTML= content;
     questionsContainer.appendChild(newElement);
 }
+function incrementQuestionNo(){
+    //code for ruuning closed loop for question number;
+}
 
 var numOfQuestions = 20;
 for(var i= 1; i<=numOfQuestions ; i++){
@@ -45,7 +48,6 @@ function getQuestion(quesNo){
            var no_of_options = data.answers.length;
            console.log(no_of_options);
            var form = document.querySelectorAll(".questionsView .form .radio_button")[0];
-           console.log(form);
            for(var i = 0; i< no_of_options;i++){
                var radioButton = document.createElement("input");
                radioButton.setAttribute("type","radio");
@@ -63,3 +65,41 @@ function getQuestion(quesNo){
      
 }
 getQuestion(questionNo);
+
+function sendAnswer(quesNo,key){
+    var data = $.ajax( {
+        type: 'POST',
+        url: `/store_response`,
+        data: {
+            "queskey" : quesNo,
+            "anskey" : key
+        },
+        success: function(data) {             
+        }
+       
+        
+    });
+ console.log(data);
+}
+
+function SaveAndNext(){
+    var form = document.querySelectorAll(".questionsView .form .radio_button .div ,input");
+    var checked_radio;
+    for(var i=0; i<form.length ;i++){
+        if(form[i].checked){
+            console.log(form[i]);
+            checked_radio =  form[i];
+        }
+    }
+    var post_key = checked_radio.getAttribute("key");
+    return post_key;
+}
+var saveAndNext = document.querySelectorAll(".footer-buttons #save-next")[0];
+saveAndNext.addEventListener("click",function(){
+var key = SaveAndNext();
+console.log(key);
+sendAnswer(questionNo , key);
+
+});
+
+

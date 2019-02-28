@@ -26,6 +26,14 @@ def sign_in(request):
         return render(request, 'base/sign_in.html')
     else:
         return redirect('/')
+
+# def create_member(request, user):
+#     name = user.first_name + " " + user.last_name
+#     if Member.objects.filter(user=user).exists():
+#         return redirect('/') #Redirect to wherever you want the user to go to after logging in.
+#     else:
+#         new_member = Member(user = user, name=name)
+#         return redirect('/') #Redirect to wherever you want the user to go to after logging in.
         
 @login_required(login_url='/sign_in')
 def add_to_review(request, queskey):
