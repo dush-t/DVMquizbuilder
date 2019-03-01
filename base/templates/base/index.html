@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-    {%load static%}
+{%load static%}
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <title>Quiz-Portal</title>
 </head>
+
 <body>
     <div class="top-bar">
         <div class="event-title">
@@ -21,26 +23,26 @@
             <div class="user-area-header">
                 <span id="user-question-header">Question</span>
                 <div class="marking-scheme">
-                    <span id="correct">CORRECT:  </span>
-                    <span id="incorrect">INCORRECT:  </span>
-                    <span id="unattempted">UNATTEMPTED:  </span>
+                    <span id="attempted">ATTEMPTED: </span>
+                    <span id="unattempted">UNATTEMPTED: </span>
                 </div>
                 <div class="ham"></div>
             </div>
             <div class="questionsView">
-                <div class = "question-text"></div>
-                <div class = "form" >
-                     <form class="radio_button">
-                     </form>
+                <div class="question-text"></div>
+                <div class="form">
+                    <form class="radio_button">
+                    </form>
                 </div>
             </div>
             <div class="user-footer">
                 <div class="footer-buttons">
-                    <span id="back">Back</span>
+                    <span id="prev">Prev</span>
                     <span id="save-next">Save and Next</span>
-                    <span id="skip">Skip</span>
+                    <span id="next">Next</span>
+                    <span id="review">Mark for review</span>
                 </div>
-                <div class="question-ref">
+                <!-- <div class="question-ref">
                     <div class="ref-box">
                         <div id="color-box" style="background: #238DD0"></div>
                         <span id="text-box">CURRENT</span>
@@ -57,28 +59,31 @@
                         <div id="color-box" style="background: #EEEEEE"></div>
                         <span id="text-box">UN-VISITED</span>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
         <div class="question-wrapper">
-            <div class="question-header"> 
+            <div class="question-header">
                 <span id="question-icon"></span>
                 <span>QUESTIONS</span>
             </div>
             <div class="questions-container"></div>
             <div class="questions-indicator">
-                <div class="indicators"><div class="items attempted"></div>Attempted</div>
-                <div class="indicators"><div class="items not-attempted"></div>Not Attempted</div>
-                <div class="indicators"><div class="items to-be-reviewed"></div>To be reviewed</div>
-                <div class="indicators"><div class="items not-reviewed-yet"></div>Not reviewed yet</div>
-                <div class="indicators"><div class="items attempt-mfr"></div>Attempted and mark for review</div>
+                <div class="indicators">
+                    <span class="items attempted"></span>Attempted
+                </div>
+                <div class="indicators">
+                    <div class="items not-attempted"></div>Not Attempted
+                </div>
+                <div class="indicators">
+                    <div class="items to-be-reviewed"></div>Marked for review
+                </div>
             </div>
         </div>
     </div>
-    <script
-    src="https://code.jquery.com/jquery-3.3.1.js"
-    integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
-crossorigin="anonymous"></script>
-<script type="text/javascript" src="{% static 'js/quiz.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+        crossorigin="anonymous"></script>
+    <script type="text/javascript" src="{% static 'js/quiz.js' %}"></script>
 </body>
+
 </html>

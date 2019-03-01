@@ -4,6 +4,7 @@ function questionDisplay(content){
     newElement.className = "questions";
     var questionsContainer = document.getElementsByClassName("questions-container")[0];
     newElement.innerHTML= content;
+    newElement.setAttribute("onclick", "navQues("+(content-1)+")");
     questionsContainer.appendChild(newElement);
 }
 function incrementQuestionNo(){
@@ -14,6 +15,15 @@ var numOfQuestions = 20;
 for(var i= 1; i<=numOfQuestions ; i++){
     questionDisplay(i);
 }
+
+function navQues(quesNo)
+{
+    questionNo = quesNo;
+    document.getElementsByClassName("radio_button")[0].innerHTML="";
+    document.getElementsByClassName("question-text")[0].innerHTML="";
+    getQuestion(quesNo);
+}
+
 
 // var queskey=0;
 // function XML_HTTP(){
@@ -39,14 +49,10 @@ function getQuestion(quesNo){
         data: {
         },
         success: function(data) {
-            // console.log(data);
             var obj = JSON.parse;
-           console.log(data); 
-           console.log(data.question);
            var question_view = document.querySelectorAll(".questionsView .question-text")[0];
            question_view.innerHTML = `${data.question}`;
            var no_of_options = data.answers.length;
-           console.log(no_of_options);
            var form = document.querySelectorAll(".questionsView .form .radio_button")[0];
            for(var i = 0; i< no_of_options;i++){
                var radioButton = document.createElement("input");
@@ -79,16 +85,15 @@ function sendAnswer(quesNo,key){
        
         
     });
- console.log(data);
 }
-
+var checkedKey;
 function SaveAndNext(){
     var form = document.querySelectorAll(".questionsView .form .radio_button .div ,input");
     var checked_radio;
     for(var i=0; i<form.length ;i++){
         if(form[i].checked){
-            console.log(form[i]);
             checked_radio =  form[i];
+            checkedKey = i;
         }
     }
     var post_key = checked_radio.getAttribute("key");
@@ -97,9 +102,49 @@ function SaveAndNext(){
 var saveAndNext = document.querySelectorAll(".footer-buttons #save-next")[0];
 saveAndNext.addEventListener("click",function(){
 var key = SaveAndNext();
-console.log(key);
 sendAnswer(questionNo , key);
+localStorage.setItem("ans"+questionNo, checkedKey);
+doNext();
+});
+
+
+var review = document.querySelectorAll(".footer-buttons #review")[0];
+review.addEventListener("click",function(){
+    console.log("Click");
+    sendReview(questionNo);
 
 });
 
+
+function sendReview(quesNo){
+    var data = $.ajax( {
+        type: 'POST',
+        url: '/atr',
+        data: {
+            "queskey" : quesNo
+        },
+        success: function(data) {             
+        }
+       
+        
+    });
+}
+
+var next = document.querySelectorAll(".footer-buttons #next")[0];
+next.addEventListener("click", doNext);
+function doNext(){
+    questionNo++;
+    document.getElementsByClassName("radio_button")[0].innerHTML="";
+    document.getElementsByClassName("question-text")[0].innerHTML="";
+    getQuestion(questionNo);
+}
+
+var prev = document.querySelectorAll(".footer-buttons #prev")[0];
+prev.addEventListener("click", doPrev);
+function doPrev(){
+    questionNo--;
+    document.getElementsByClassName("radio_button")[0].innerHTML="";
+    document.getElementsByClassName("question-text")[0].innerHTML="";
+    getQuestion(questionNo);
+}
 

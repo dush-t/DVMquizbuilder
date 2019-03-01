@@ -40,10 +40,11 @@
     position: absolute;
     right: 20px;
     justify-content: center;
+    cursor: pointer;
     /* margin-left: 50vw; */
 }
 
-@media all and (max-width: 400px) {
+@media all and (max-width: 500px) {
     .event-title {
         font-size: 6vw;
         width: 100%;
@@ -98,7 +99,7 @@
     display: none;
 }
 
-@media all and (max-width: 400px) {
+@media all and (max-width: 500px) {
     .user-area-header {
         height: 45px;
         font-size: 1em;
@@ -121,13 +122,12 @@
     right: 0;
 }
 
-@media all and (max-width: 400px) {
+@media all and (max-width: 500px) {
     .marking-scheme { display: none; }
 }
 
-#correct {width: 100px}
-#incorrect {width: 110px}
 #unattempted {width: 140px}
+#attempted {width: 140px}
 
 .question-wrapper {
     width: 27%;
@@ -171,7 +171,7 @@
 
 .footer-buttons {
     height: 100%;
-    width: 338px;
+    width: 500px;
     text-align: center;
     font-size: 1.2em;
     color: #fff;
@@ -182,9 +182,10 @@
 .footer-buttons > span {
     margin-right: 10px;
     background: #238dd0;
-    padding: 5px 13px;
+    padding: 5px 10px;
+    cursor: pointer;
 }
-@media all and (max-width: 400px) {
+@media all and (max-width: 500px) {
     .user-footer {
         width: 100%;
         height: 50px;
@@ -205,7 +206,7 @@
     justify-content: flex-end;
     margin-left: 20px;
 }
-@media all and (max-width: 400px) {
+@media all and (max-width: 500px) {
     .question-ref {
         display: none;
     }
@@ -258,6 +259,7 @@
     display: flex;
     align-items:center;
     justify-content: space-around;
+    cursor: pointer;
 }
 .question-wrapper .indicators{ 
     height: fit-content;
@@ -267,7 +269,15 @@
     flex-direction: column;
     align-items: center;
 }
-.question-wrapper .indicators:nth-child(4n), .indicators:nth-child(5n){
+.indicators{
+    width: 100%;
+    height: fit-content;
+    margin: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.question-wrapper{
     flex-direction: row;
 }
 .items{
@@ -291,14 +301,4 @@
     border-radius: 50%;
     background: purple;
     margin-bottom: 5px;
-}
-.not-reviewed-yet{
-    border-radius: 50%;
-    background: grey;
-    margin-right: 5px;
-}
-.attempt-mfr{
-    border-radius: 50%;
-    background: gold;
-    margin-right: 5px;
 }

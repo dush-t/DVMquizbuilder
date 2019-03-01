@@ -35,12 +35,91 @@ def sign_in(request):
 #         new_member = Member(user = user, name=name)
 #         return redirect('/') #Redirect to wherever you want the user to go to after logging in.
         
-@login_required(login_url='/sign_in')
-def add_to_review(request, queskey):
+#@login_required(login_url='/sign_in')
+@csrf_exempt
+def add_to_review(request):
     current_member = Member.objects.get(user = request.user)
-    question = Question.objects.get(questionkey=queskey)
-    current_member.marked_for_review.add(question)
-    return HttpResponse("Question marked for review") #This needs to be changed later
+    if request.method == "POST":
+        queskey = request.POST.get("queskey")    
+        question = Question.objects.get(questionkey=queskey)
+        current_member.marked_for_review.add(question)
+        return HttpResponse("Question marked for review") #This needs to be changed later
+    else:
+        q = current_member.marked_for_review.all()
+        atrlist = []
+        for question in q:
+            atrlist.append(question.questionkey)
+        data = {
+            "atrlist" : atrlist
+        }
+        return JsonResponse(data)
+
+@csrf_exempt
+def add_to_not_attempted(request):
+    current_member = Member.objects.get(user = request.user)
+    if request.method == "POST":
+        queskey = request.POST.get("queskey")     
+        question = Question.objects.get(questionkey=queskey)
+        current_member.not_attempted.add(question)
+        return HttpResponse("Question added to not attempted") #This needs to be changed later
+    else:
+        q = current_member.not_attempted.all()
+        atnalist = []
+        for question in q:
+            atnalist.append(question.questionkey)
+        data = {
+            "atnalist" : atnalist
+        }
+        return JsonResponse(data)
+
+@csrf_exempt
+def add_to_attempted(request):
+    current_member = Member.objects.get(user = request.user)
+    if request.method == "POST":
+        queskey = request.POST.get("queskey")    
+        question = Question.objects.get(questionkey=queskey)
+        current_member.questions_attempted.add(question)
+        return HttpResponse("Question added to attempted") #This needs to be changed later
+    else:
+        q = current_member.questions_attempted.all()
+        atalist = []
+        for question in q:
+            atalist.append(question.questionkey)
+        data = {
+            "atalist" : atalist
+        }
+        return JsonResponse(data)
+
+
+@csrf_exempt
+def get_question_status(request):
+    current_member = Member.objects.get(user = request.user)
+    atrlist = []
+    atnalist = []
+    atalist = []
+    arlist = []
+
+    for question in current_member.marked_for_review.all(): #Add to review
+        atrlist.append(question.questionkey)
+    for question in current_member.not_attempted.all():  #Add to not_attempted
+        atnalist.append(question.questionkey)
+    for question in current_member.questions_attempted.all():  #Add to attempted
+        atalist.append(question.questionkey)
+
+    review_questions = current_member.marked_for_review.all()
+    attempted_questions = current_member.questions_attempted.all()
+    ar_questions = review_questions.intersection(attempted_questions)
+    for question in ar_questions:
+        arlist.append(question.questionkey)
+    
+    data = {
+        "reviewQues" : atrlist,
+        "attemptedQues" : atalist,
+        "unattemptedQues" : atnalist,
+        "reviewAttemptedQues" : arlist
+    }
+    return JsonResponse(data)
+    
 
 @csrf_exempt
 #@login_required(login_url='/sign_in')

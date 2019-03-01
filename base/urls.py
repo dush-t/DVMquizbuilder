@@ -13,5 +13,8 @@ urlpatterns = [
     path("sign_in", views.sign_in, name="sign_in"),
     path("store_response", views.store_response, name="store_response"),
     path("test", views.test, name="test"),
-    path("atr/<int:queskey>", views.add_to_review, name="add_to_review")
+    path("atr", views.add_to_review, name="add_to_review"),
+    path("atna", views.add_to_not_attempted, name="add_to_not_attempted"),
+    path("ata", views.add_to_attempted, name="add_to_attempted"),
+    path("gqs", views.get_question_status, name="get_question_status")
 ]
