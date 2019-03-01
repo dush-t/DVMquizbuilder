@@ -29,7 +29,7 @@ class Question(models.Model):
     questionkey = models.IntegerField(default=0, unique=False)
     content = models.TextField()
     image = models.ImageField(upload_to='ques_img', null=True, blank=True)
-    answer = models.CharField(max_length=50)
+    answer = models.CharField(max_length=50, blank=True)
 
     # Question status --
     attempted_by = models.ManyToManyField(Member, related_name='questions_attempted', blank=True)

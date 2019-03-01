@@ -1,9 +1,11 @@
 from .models import Member, Question, Answer, Response
+from .forms import AddQuestion
 
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.models import User
 from django.http import HttpResponse, JsonResponse
 import re
@@ -35,7 +37,7 @@ def sign_in(request):
 #         new_member = Member(user = user, name=name)
 #         return redirect('/') #Redirect to wherever you want the user to go to after logging in.
         
-#@login_required(login_url='/sign_in')
+
 @csrf_exempt
 def add_to_review(request):
     current_member = Member.objects.get(user = request.user)
@@ -119,7 +121,7 @@ def get_question_status(request):
         "reviewAttemptedQues" : arlist
     }
     return JsonResponse(data)
-    
+
 
 @csrf_exempt
 #@login_required(login_url='/sign_in')
@@ -229,49 +231,80 @@ def get_time_remaining(request):
 
     return JsonResponse(data)
 
-#def check_answer(request):
-#     member = Member.objects.get(user=request.user)
-#     correct_flag = 0
-#     if request.method = 'POST':
-#         queskey = request.POST.get("queskey")
-#         question = Question.objects.get(questionkey=queskey)
+@staff_member_required
+def add_question(request):
+    if request.method == "POST":
+        form = AddQuestion(request.POST)
+        if form.is_valid():
+            ques_content = form.cleaned_data.get("question_content")
+            key = form.cleaned_data.get("question_key")
+            question = Question(questionkey=key, content=ques_content, is_mcq=True)
+            question.save()
+            question = Question.objects.get(questionkey=key)
 
-#         try:
-#             anskey = request.POST.get("anskey")
-#             answers = question.answers.all()
-#             answer = answers.get(key=anskey)
-#             if answer.is_correct:
-#                 correct_flag = 1
-#             else:
-#                 correct_flag = 2
-#         except:
-#             answer = request.POST.get("answer")
-#             if answer == question.answer:
-#                 correct_flag = 1
-#             else:
-#                 correct_flag = 2
+            for i in range(4):
+                content = form.cleaned_data.get("option_" + str(i+1))
+                answer = Answer(parent_question=question, content=content, key=i+1)
+                answer.save()
+            
+            true_key = form.cleaned_data.get("true_option")
+            answer = question.answers.get(key=true_key)
+            answer.is_correct = True
+            answer.save()
+            return redirect("/add_question")
+        else:
+            return HttpResponse("Please check the data you have entered")
+    else:
+        form = AddQuestion()
+        return render(request, 'base/add_question.html', {"form":form})
 
-        
-#         if correct_flag == 1:
-#             if question in member.ans_correctly.all():
-#                 pass
-#             elif question in member.ans_wrongly.all():
-#                 member.score = member.score + question.score_increment + question.score_decrement
-#                 member.save()
-#             else:
-#                 member.score = member.score + question.score_increment
-#                 member.save()
-#         elif correct_flag == 2:
-#             if question in member.ans_correctly.all():
-#                 member.score = member.score - question.score_increment - question.score_decrement
-#                 member.save
-#             elif question in member.ans_wrongly.all():
-#                 pass
-#             else:
-#                 member.score = member.score - question.score_decrement
-#         else:
-#             pass
-        
-#         return HttpResponse(status=204)
-#     else:                                                   #What do I do with this??
-#         return HttpResponse("You weren't supposed to be here you know")
+            
+    ##LET THIS BE A REMINDER TO THOSE WHO FORGET THAT LOOPS EXIST - 
+    ##
+
+            # op1_content = form.cleaned_data.get("option_1")
+            # answer = Answer(parent_question=question, content=op1_content, key=1)
+            # answer.save()
+
+            # op2_content = form.cleaned_data.get("option_2")
+            # answer = Answer(parent_question=question, content=op2_content, key=2)
+            # answer.save()
+
+            # op3_content = form.cleaned_data.get("option_3")
+            # answer = Answer(parent_question=question, content=op1_content, key=3)
+            # answer.save()
+
+            # op1_content = form.cleaned_data.get("option_1")
+            # answer = Answer(parent_question=question, content=op1_content, key=1)
+            # answer.save()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
