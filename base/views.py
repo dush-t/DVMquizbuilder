@@ -256,7 +256,8 @@ def add_question(request):
             return HttpResponse("Please check the data you have entered")
     else:
         form = AddQuestion()
-        return render(request, 'base/add_question.html', {"form":form})
+        set_key = len(Question.objects.all())
+        return render(request, 'base/add_question.html', {"form":form, "newkey":set_key})
 
             
     ##LET THIS BE A REMINDER TO THOSE WHO FORGET THAT LOOPS EXIST - 

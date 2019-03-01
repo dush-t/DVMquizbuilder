@@ -8,8 +8,8 @@ class ResponseForm(forms.Form):
     anskey = forms.IntegerField()
 
 class AddQuestion(forms.Form):
-    question_content = forms.CharField(widget=forms.Textarea)
     question_key = forms.IntegerField()
+    question_content = forms.CharField(widget=forms.Textarea)
     option_1 = forms.CharField(widget=forms.Textarea)
     option_2 = forms.CharField(widget=forms.Textarea)
     option_3 = forms.CharField(widget=forms.Textarea)
