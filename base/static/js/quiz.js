@@ -148,3 +148,15 @@ function doPrev(){
     getQuestion(questionNo);
 }
 
+// ------------------  Ham-menu handler  --------------------
+const nav = document.querySelector(".nav-menu");
+
+document.querySelector(".ham").addEventListener("click", () => {
+    nav.style.left = "0"; 
+    console.log('ham launched');
+})
+document.querySelector("#close-nav").addEventListener("click", () => {
+    nav.style.left = "-100%";
+});
+// --------------------------------------------------------
+
