@@ -1,4 +1,32 @@
 var questionNo= 0;
+
+// ------------------- Timer and Instructions --------------------
+var maxtime_min = 30;
+var timer= document.getElementById("timer");
+var minutesLeft = maxtime_min;
+var secondsLeft = 0;
+timer.innerHTML = `${minutesLeft} : ${secondsLeft}`;
+
+document.querySelector(".start-button").addEventListener("click", function() {
+    document.querySelector(".instructions-page").style.animation = "fade-instructions 0.2s ease forwards";
+    document.querySelector(".instructions-page").style.zIndex = "0";
+    // document.querySelector(".instructions-page").style.display = "none";
+});
+
+document.querySelector(".start-button").addEventListener("click", function() {
+    setInterval(function(){
+        if(secondsLeft == 0){
+            minutesLeft -= 1;
+            secondsLeft = 60;
+        }
+        secondsLeft-=1;
+        timer.innerHTML = `${minutesLeft} : ${secondsLeft}`;
+    },1000);
+    console.log("Timer called on click");
+    // startquiz();
+});
+// ---------------------------------------------------
+
 function questionDisplay(content){
     var newElement = document.createElement("div");
     newElement.className = "questions";
