@@ -16,6 +16,7 @@ urlpatterns = [
     path("atr", views.add_to_review, name="add_to_review"),
     path("atna", views.add_to_not_attempted, name="add_to_not_attempted"),
     path("ata", views.add_to_attempted, name="add_to_attempted"),
+    path("atar", views.add_to_ar, name="add_to_ar"),
     path("gqs", views.get_question_status, name="get_question_status"),
     path("add_question", views.add_question, name="add_question")
 ]

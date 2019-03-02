@@ -16,6 +16,7 @@ class Member(models.Model):
     # As this app will be used for only one quiz.
 
     submitted = models.BooleanField(default=False)
+    has_started = models.BooleanField(default=False)
     # Will be set to true if the member has submitted his/her test.
     # Once true, the member cannot access the same test
 
@@ -34,9 +35,8 @@ class Question(models.Model):
     # Question status --
     attempted_by = models.ManyToManyField(Member, related_name='questions_attempted', blank=True)
     review_by = models.ManyToManyField(Member, related_name='marked_for_review', blank=True)
-    answered_right = models.ManyToManyField(Member, related_name='ans_correctly', blank=True)
-    answered_wrong = models.ManyToManyField(Member, related_name="ans_wrongly", blank=True)
     not_attempted_by = models.ManyToManyField(Member, related_name='not_attempted', blank=True)
+    ar_by = models.ManyToManyField(Member, related_name="ar_questions", blank=True)
 
     # Question properties --
     score_increment = models.IntegerField(default=10)

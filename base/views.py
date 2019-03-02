@@ -1,6 +1,7 @@
 from .models import Member, Question, Answer, Response
 from .forms import AddQuestion
 
+from django.utils import timezone
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -37,6 +38,7 @@ def sign_in(request):
 #         new_member = Member(user = user, name=name)
 #         return redirect('/') #Redirect to wherever you want the user to go to after logging in.
         
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @csrf_exempt
 def add_to_review(request):
@@ -44,7 +46,16 @@ def add_to_review(request):
     if request.method == "POST":
         queskey = request.POST.get("queskey")    
         question = Question.objects.get(questionkey=queskey)
+        
+        if current_member.questions_attempted.filter(questionkey=queskey).exists():
+            current_member.questions_attempted.remove(question)
+        if current_member.not_attempted.filter(questionkey=queskey).exists():
+            current_member.not_attempted.remove(question)
+        if current_member.ar_questions.filter(questionkey=queskey).exists():
+            current_member.ar_questions.remove(question)
+        
         current_member.marked_for_review.add(question)
+
         return HttpResponse("Question marked for review") #This needs to be changed later
     else:
         q = current_member.marked_for_review.all()
@@ -63,11 +74,14 @@ def add_to_not_attempted(request):
         queskey = request.POST.get("queskey")     
         question = Question.objects.get(questionkey=queskey)
 #To make sure that a question does not appear in attempted and not attempted both.        
-        try:
+        if current_member.questions_attempted.filter(questionkey=queskey).exists():
             current_member.questions_attempted.remove(question)
-            current_member.not_attempted.add(question)
-        except:
-            current_member.not_attempted.add(question)
+        if current_member.marked_for_review.filter(questionkey=queskey).exists():
+            current_member.marked_for_review.remove(question)
+        if current_member.ar_questions.filter(questionkey=queskey).exists():
+            current_member.ar_questions.remove(question)
+
+        current_member.not_attempted.add(question)
 
         return HttpResponse("Question added to not attempted") #This needs to be changed later
     else:
@@ -87,11 +101,14 @@ def add_to_attempted(request):
         queskey = request.POST.get("queskey")    
         question = Question.objects.get(questionkey=queskey)
 #To make sure that a question does not appear in attempted and not attempted both.
-        try:
+        if current_member.marked_for_review.filter(questionkey=queskey).exists():
+            current_member.marked_for_review.remove(question)
+        if current_member.not_attempted.filter(questionkey=queskey).exists():
             current_member.not_attempted.remove(question)
-            current_member.questions_attempted.add(question)
-        except:
-            current_member.questions_attempted.add(question)
+        if current_member.ar_questions.filter(questionkey=queskey).exists():
+            current_member.ar_questions.remove(question)
+        
+        current_member.questions_attempted.add(question)
 
         return HttpResponse("Question added to attempted") #This needs to be changed later
     else:
@@ -104,6 +121,34 @@ def add_to_attempted(request):
         }
         return JsonResponse(data)
 
+@csrf_exempt
+def add_to_ar(request):
+    current_member = Member.objects.get(user = request.user)
+    if request.method == "POST":
+        queskey = request.POST.get("queskey")    
+        question = Question.objects.get(questionkey=queskey)
+#To make sure that a question does not appear in attempted and not attempted both.
+        if current_member.marked_for_review.filter(questionkey=queskey).exists():
+            current_member.marked_for_review.remove(question)
+        if current_member.not_attempted.filter(questionkey=queskey).exists():
+            current_member.not_attempted.remove(question)
+        if current_member.questions_attempted.filter(questionkey=queskey).exists():
+            current_member.questions_attempted.remove(question)
+        
+        current_member.ar_questions.add(question)
+
+        return HttpResponse("Question added to attempted") #This needs to be changed later
+    else:
+        q = current_member.ar_questions.all()
+        arlist = []
+        for question in q:
+            arlist.append(question.questionkey)
+        data = {
+            "arlist" : arlist
+        }
+        return JsonResponse(data)
+
+#---------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @csrf_exempt
 def get_question_status(request):
@@ -119,11 +164,7 @@ def get_question_status(request):
         atnalist.append(question.questionkey)
     for question in current_member.questions_attempted.all():  #Add to attempted
         atalist.append(question.questionkey)
-
-    review_questions = current_member.marked_for_review.all()
-    attempted_questions = current_member.questions_attempted.all()
-    ar_questions = review_questions.intersection(attempted_questions)
-    for question in ar_questions:
+    for question in current_member.ar_questions.all(): #Add to attempted and reviewed
         arlist.append(question.questionkey)
     
     data = {
@@ -238,18 +279,31 @@ def get_question(request, queskey):
         return JsonResponse(data)
         
 def get_time_remaining(request):
+    current_member = Member.objects.get(user=request.user)
+    if request.method == "POST":
+        
+        if current_member.has_started:
+            
+            return HttpResponse(status=204)
+        
+        else:
+            current_member.start_time = timezone.now()
+            current_member.has_started = True
+            current_member.save()
+            return HttpResponse(status=204)
 
-    current_member = request.user
-    start_time = current_member.start_time
-    quiz_time = datetime.timedelta(hours = 1, minutes = 0)
-    end_time = start_time + quiz_time
-    time_remaining = end_time - datetime.datetime.now() # A datetime.timdelta object
+    else:
+        
+        start_time = current_member.start_time
+        quiz_time = datetime.timedelta(minutes = 30)
+        end_time = start_time + quiz_time
+        time_remaining = end_time - datetime.datetime.now(timezone.utc) # A datetime.timedelta object
 
-    data = {
-        "time_remaining":time_remaining,
-    }
+        data = {
+            "time_remaining":time_remaining.seconds,
+        }
 
-    return JsonResponse(data)
+        return JsonResponse(data)
 
 @staff_member_required
 def add_question(request):

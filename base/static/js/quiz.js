@@ -1,30 +1,107 @@
 var questionNo= 0;
+sessionStorage.setItem("is_reloaded", true);
+
 
 // ------------------- Timer and Instructions --------------------
-var maxtime_min = 30;
-var timer= document.getElementById("timer");
-var minutesLeft = maxtime_min;
-var secondsLeft = 0;
-timer.innerHTML = `${minutesLeft} : ${secondsLeft}`;
+
+var startButton = document.querySelector(".instructions-page .start-button");
+
+function startTimer(){
+    var data = $.ajax( {
+        type: 'POST',
+        url: `/get_time_remaining`,
+        data: {
+        },
+        success: function(data) {             
+        }
+    
+    });
+}
+
+function getTime(){
+    var data = $.ajax( {
+        type: 'GET',
+        url: `/get_time_remaining`,
+        data: {
+        },
+        success: function(data){   
+           var obj = JSON.parse;
+           var time = data.time_remaining;
+           var minutes = parseInt(time/60);
+           var seconds = parseInt(time%60);
+           setTimer(minutes,seconds);
+        }
+    });    
+}
+//-----------------------------------------------------------------
+function getQuestionStatus(){
+    var data = $.ajax( {
+        type: 'GET',
+        url: `/gqs`,
+        data: {
+        },
+        
+        success: function(data){
+            var buttons = document.querySelectorAll(".question-wrapper .questions-container div");
+            console.log(data);
+            console.log(data.attemptedQues);
+            for(var i=0; i< data.attemptedQues.length ; i++){
+                console.log("ds");
+                console.log(data.attemptedQues[i]);
+                attempted(data.attemptedQues[i]);
+            } 
+            for(var i=0; i< data.unattemptedQues.length ; i++){
+                //console.log("ds");
+                //console.log(data.attemptedQues[i]);
+                unattempted(data.unattemptedQues[i]);
+            }
+            for(var i=0; i< data.reviewQues.length ; i++){
+                //console.log("ds");
+                //console.log(data.attemptedQues[i]);
+                markForReview(data.reviewQues[i]);
+            }
+            for(var i=0; i< data.attemptedQues.length ; i++){
+                console.log("ds");
+                console.log(data.attemptedQues[i]);
+                attempted(data.attemptedQues[i]);
+            } 
+        }
+    });    
+}
+getQuestionStatus();
+//--------------------------------------------------------------
 
 document.querySelector(".start-button").addEventListener("click", function() {
     document.querySelector(".instructions-page").style.animation = "fade-instructions 0.2s ease forwards";
     document.querySelector(".instructions-page").style.zIndex = "0";
     // document.querySelector(".instructions-page").style.display = "none";
 });
-
-document.querySelector(".start-button").addEventListener("click", function() {
+function setTimer(maxtime_min, secondsLeft){
+    var timer= document.getElementById("timer");
+    var minutesLeft = maxtime_min;
+    if(secondsLeft<10)
+    timer.innerHTML = `${minutesLeft} : 0${secondsLeft}`   
+    else
+    timer.innerHTML = `${minutesLeft} : ${secondsLeft}`;
     setInterval(function(){
         if(secondsLeft == 0){
             minutesLeft -= 1;
             secondsLeft = 60;
         }
         secondsLeft-=1;
+        if(secondsLeft<10)
+        timer.innerHTML = `${minutesLeft} : 0${secondsLeft}`   
+        else
         timer.innerHTML = `${minutesLeft} : ${secondsLeft}`;
-    },1000);
+    
+     },1000);
+}
+document.querySelector(".start-button").addEventListener("click", function() {
+    setTimer(30,0);
     console.log("Timer called on click");
     // startquiz();
 });
+document.querySelector(".start-button").addEventListener("click", startTimer);
 // ---------------------------------------------------
 
 function questionDisplay(content){
@@ -227,3 +304,11 @@ document.querySelector("#close-nav").addEventListener("click", () => {
 });
 // --------------------------------------------------------
 // hard refresh 
+
+
+if(sessionStorage.getItem("is_reloaded"))
+{
+    console.log("reloaded");
+    // document.querySelector(".instructions-page").style.zIndex = "0";
+    // document.querySelector(".instructions-page").style.opacity = "0";
+}
