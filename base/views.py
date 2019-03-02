@@ -62,7 +62,13 @@ def add_to_not_attempted(request):
     if request.method == "POST":
         queskey = request.POST.get("queskey")     
         question = Question.objects.get(questionkey=queskey)
-        current_member.not_attempted.add(question)
+#To make sure that a question does not appear in attempted and not attempted both.        
+        try:
+            current_member.questions_attempted.remove(question)
+            current_member.not_attempted.add(question)
+        except:
+            current_member.not_attempted.add(question)
+
         return HttpResponse("Question added to not attempted") #This needs to be changed later
     else:
         q = current_member.not_attempted.all()
@@ -80,7 +86,13 @@ def add_to_attempted(request):
     if request.method == "POST":
         queskey = request.POST.get("queskey")    
         question = Question.objects.get(questionkey=queskey)
-        current_member.questions_attempted.add(question)
+#To make sure that a question does not appear in attempted and not attempted both.
+        try:
+            current_member.not_attempted.remove(question)
+            current_member.questions_attempted.add(question)
+        except:
+            current_member.questions_attempted.add(question)
+
         return HttpResponse("Question added to attempted") #This needs to be changed later
     else:
         q = current_member.questions_attempted.all()
@@ -194,7 +206,14 @@ def get_score(request):
 
 #@login_required(login_url='/sign_in')
 def get_question(request, queskey):
+    current_member = Member.objects.get(user=request.user)
     current_question = Question.objects.get(questionkey=queskey)
+    marked_key = 69
+    try:
+        response = Response.objects.filter(member=current_member, question=current_question)[0]
+        marked_key = response.answer_mcq.key
+    except:
+        pass
 
     if current_question.is_mcq == True:
         answerlist = []
@@ -207,7 +226,8 @@ def get_question(request, queskey):
             "answers":answerlist,
             "keys":keylist,
             "mcq_flag":True,
-            "image_flag":current_question.is_image
+            "image_flag":current_question.is_image,
+            "marked_answer":marked_key
         }
         return JsonResponse(data)
     else:

@@ -1,0 +1,19 @@
+<html>
+    <head>
+        <title>
+            Add a question
+        </title>
+    </head>
+    <body>
+        <p>According to our database query, the key to this question should be set to {{newkey}}.</p>
+        <p>However you can choose any other key also, depending on the question number you want.</p>
+        <form method='POST', action="add_question">
+            {%csrf_token%}
+            <table>
+                {{form.as_table}}
+            </table>
+            <input type="submit" value="Submit">
+        </form>
+        <br>
+    </body>
+</html>
