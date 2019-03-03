@@ -56,6 +56,8 @@ function getQuestionStatus(){
                 attempted_review(data.reviewAttemptedQues[i]);
             } 
             // console.log(data);
+            attempted_unattempted();
+
         }
     });    
 }
@@ -103,6 +105,10 @@ for(var i= 1; i<=numOfQuestions ; i++){
 
 function navQues(quesNo)
 {
+    if(window.innerWidth <= 500)
+    {
+        closeNav();
+    }
     questionNo = quesNo;
     document.getElementsByClassName("radio_button")[0].innerHTML="";
     document.getElementsByClassName("question-text")[0].innerHTML="";
@@ -308,15 +314,30 @@ function doPrev(){
 }
 
 // ------------------  Ham-menu handler  --------------------
-const nav = document.querySelector(".nav-menu");
-
+const nav = document.querySelector(".question-wrapper");
+var navCount = 0;
 document.querySelector(".ham").addEventListener("click", () => {
-    nav.style.left = "0"; 
-    console.log('ham launched');
-})
-document.querySelector("#close-nav").addEventListener("click", () => {
-    nav.style.left = "-100%";
+    if(navCount == 0){
+        openNav();
+    }
+    else {
+        closeNav();
+    }
 });
+
+function openNav() {
+    nav.style.left = "0";
+    navCount = 1;
+    // var imgURL = '../images/cancel.png';
+    // document.getElementsByClassName("ham")[0].style.background = "url('../images/cancel.png')";
+}
+
+function closeNav() {
+    nav.style.left = "-80%";
+    navCount = 0;
+    // var imgURL = '../images/menu.png';
+    // document.getElementsByClassName("ham")[0].style.background = "url('../images/menu.png')";
+}
 // --------------------------------------------------------
 // hard refresh 
 
@@ -398,6 +419,7 @@ function clear_response(){
     for(var i=0; i<form.length ;i++){
         form[i].checked = false;
     }
+    unattempted(questionNo);
     buttonDisplay();
     sendClearResponse(questionNo);
 }
