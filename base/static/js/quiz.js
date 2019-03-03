@@ -22,7 +22,7 @@ function getTime(){
 }
 
 getTime();
-
+var is_mcq;
 //-----------------------------------------------------------------
 function getQuestionStatus(){
     var data = $.ajax( {
@@ -122,33 +122,66 @@ function getQuestion(quesNo){
         data: {
         },
         success: function(data) {
-           var obj = JSON.parse;
-           var question_view = document.querySelectorAll(".questionsView .question-text")[0];
-           question_view.innerHTML = `${data.question}`;
-           console.log(data);
-           var no_of_options = data.answers.length;
-           var form = document.querySelectorAll(".questionsView .form .radio_button")[0];
-           for(var i = 0; i< no_of_options;i++){
-               var radioButton = document.createElement("input");
-               radioButton.setAttribute("type","radio");
-               radioButton.setAttribute("name","answer");
-               radioButton.setAttribute("onclick","buttonDisplay()");
-               radioButton.setAttribute("key",`${data.keys[i]}`);
-               if(data.keys[i] == data.marked_answer){
-                   console.log(radioButton);
-                   // new Discovery 
-                   radioButton.setAttribute("checked", "checked");
-               }
-               var radioHolder = document.createElement("div");
-               radioHolder.append(radioButton);
-               radioHolder.innerHTML+=`${data.answers[i]}`;
-               form.appendChild(radioHolder);
+            if(data.mcq_flag){
+                is_mcq = true;
+                var obj = JSON.parse;
+                var question_view = document.querySelectorAll(".questionsView .question-text")[0];
+                if(data.image_url != 0){
+                    var quesImg = document.createElement("img");
+                    quesImg.setAttribute("src", data.image_url);
+                    quesImg.className = "quesImg";
+                    question_view.appendChild(quesImg);
+                    question_view.innerHTML += "<br><br>";
+                }
+                question_view.innerHTML += `${data.question}`;
+                console.log(data);
+                var no_of_options = data.answers.length;
+                var form = document.querySelectorAll(".questionsView .form .radio_button")[0];
+                for(var i = 0; i< no_of_options;i++){
+                    var radioButton = document.createElement("input");
+                    radioButton.setAttribute("type","radio");
+                    radioButton.setAttribute("name","answer");
+                    radioButton.setAttribute("onclick","buttonDisplay()");
+                    radioButton.setAttribute("key",`${data.keys[i]}`);
+                    if(data.keys[i] == data.marked_answer){
+                        // console.log(radioButton);
+                        // new Discovery 
+                        radioButton.setAttribute("checked", "checked");
+                    }
+                    var radioHolder = document.createElement("div");
+                    radioHolder.append(radioButton);
+                    radioHolder.innerHTML+=`${data.answers[i]}`;
+                    form.appendChild(radioHolder);
+                }
+            }
+            else{
+                is_mcq = false;
+                var obj = JSON.parse;
+                var form = document.querySelectorAll(".questionsView .form .radio_button")[0];
+                var question_view = document.querySelectorAll(".questionsView .question-text")[0];
+                question_view.innerHTML = `${data.question}`;
+                var radioButton = document.createElement("input");
+                radioButton.setAttribute("type","text");
+                radioButton.setAttribute("name","answer");
+                if(data.entered_answer != "NULL1234")
+                radioButton.setAttribute("value", data.entered_answer);
+                var radioHolder = document.createElement("div");
+                radioHolder.append(radioButton);
+                form.appendChild(radioHolder);
+                var txtBox = document.querySelectorAll(".questionsView .form .radio_button .div ,input")[0];
+                txtBox.addEventListener("change", buttonDisplay);
+                // console.log(data);
             }
             buttonDisplay();            
         }
     });
      
 }
+
+window.addEventListener("keypress", function(e) {
+    if(e.key == "Enter")
+    e.preventDefault();
+});
 getQuestion(questionNo);
 
 window.addEventListener("resize", function (){
@@ -157,29 +190,47 @@ window.addEventListener("resize", function (){
     }
 });
 function sendAnswer(quesNo,key){
-    var data = $.ajax( {
-        type: 'POST',
-        url: `/store_response`,
-        data: {
-            "queskey" : quesNo,
-            "anskey" : key
-        },
-        success: function(data) {             
-        }
-    
-    });
+    if(is_mcq){
+        var data = $.ajax( {
+            type: 'POST',
+            url: `/store_response`,
+            data: {
+                "queskey" : quesNo,
+                "anskey" : key
+            },
+            success: function(data) {             
+            }
+        });
+    }
+    else{
+        var data = $.ajax( {
+            type: 'POST',
+            url: `/store_response`,
+            data: {
+                "queskey" : quesNo,
+                "answer" : key
+            },
+            success: function(data) {             
+            }
+        });
+    }
 }
 var checkedKey;
 function SaveAndNext(){
     var form = document.querySelectorAll(".questionsView .form .radio_button .div ,input");
     var checked_radio;
-    for(var i=0; i<form.length ;i++){
-        if(form[i].checked){
-            checked_radio =  form[i];
-            checkedKey = i;
+    if(is_mcq){
+        for(var i=0; i<form.length ;i++){
+            if(form[i].checked){
+                checked_radio =  form[i];
+                checkedKey = i;
+            }
         }
+        var post_key = checked_radio.getAttribute("key");
     }
-    var post_key = checked_radio.getAttribute("key");
+    else{
+        var post_key = form[0].value;
+    }
     return post_key;
 }
 
@@ -207,6 +258,7 @@ var review = document.querySelectorAll(".footer-buttons #review")[0];
 review.addEventListener("click",function(){
     sendReview(questionNo);
     markForReview(questionNo);
+    doNext();
 });
 
 function attempted(questionNo){
@@ -354,12 +406,19 @@ function buttonDisplay(){
     var clearBtn = document.getElementById("clear");
     var form = document.querySelectorAll(".questionsView .form .radio_button .div ,input");
     var attempted = false;
-    for(var i=0; i<form.length ;i++){
-        if(form[i].checked){
-            attempted = true;
+    if(is_mcq){
+        for(var i=0; i<form.length ;i++){
+            if(form[i].checked){
+                attempted = true;
+            }
         }
     }
-
+    else{
+        if(form[0].value != "")
+        attempted = true;
+        else
+        attempted = false;
+    }
     if(questionNo == numOfQuestions-1){
         nextBtn.style.display = "none";
         save_nextBtn.style.display = "none";
@@ -414,10 +473,14 @@ function buttonDisplay(){
 var clear = document.querySelectorAll(".footer-buttons #clear")[0];
 clear.addEventListener("click", clear_response);
 function clear_response(){
-    console.log("run");
     var form = document.querySelectorAll(".questionsView .form .radio_button .div ,input");
-    for(var i=0; i<form.length ;i++){
-        form[i].checked = false;
+    if(is_mcq){
+        for(var i=0; i<form.length ;i++){
+            form[i].checked = false;
+        }
+    }
+    else{
+        form[0].value = "";
     }
     unattempted(questionNo);
     buttonDisplay();

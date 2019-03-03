@@ -302,6 +302,11 @@
 .start-button:hover {cursor: pointer}
 .start-button:active {border: 4px solid #fff}
 
+.quesImg {
+    width: 200px;
+    height: 200px;
+    background-image: url('../../../media/ques_img/61D_hobbes.jpg');
+}
 
 
 

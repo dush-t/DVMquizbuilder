@@ -9,6 +9,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.models import User
 from django.http import HttpResponse, JsonResponse
+from django.conf import settings
+import os
 import re
 import datetime
 
@@ -264,11 +266,25 @@ def get_question(request, queskey):
     current_member = Member.objects.get(user=request.user)
     current_question = Question.objects.get(questionkey=queskey)
     marked_key = 69
+    entered_answer = "NULL1234"
     try:
         response = Response.objects.filter(member=current_member, question=current_question)[0]
         marked_key = response.answer_mcq.key
     except:
         pass
+
+    try:
+        response = Response.objects.filter(member=current_member, question=current_question)[0]
+        entered_answer = response.answer_text
+    except:
+        pass
+    
+    if current_question.is_image:
+        base = settings.MEDIA_ROOT
+        media = os.path.abspath(os.path.join(base, os.pardir))
+        image_url = current_question.image.url
+    else:
+        image_url = 0
 
     if current_question.is_mcq == True:
         answerlist = []
@@ -282,13 +298,15 @@ def get_question(request, queskey):
             "keys":keylist,
             "mcq_flag":True,
             "image_flag":current_question.is_image,
-            "marked_answer":marked_key
+            "marked_answer":marked_key,
+            "image_url": image_url
         }
         return JsonResponse(data)
     else:
         data = {
             "question":current_question.content,
-            "mcq_flag":False
+            "mcq_flag":False,
+            "entered_answer":entered_answer
         }
         return JsonResponse(data)
 
