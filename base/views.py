@@ -18,7 +18,7 @@ def test(request):
     return render(request, 'base/reponse.html')
 
 def instructions(request):
-    return render(request, 'base/instructions.html')
+    return render(request, 'base/instruction.html')
 
 
 def index(request):
@@ -166,15 +166,29 @@ def get_question_status(request):
         atalist.append(question.questionkey)
     for question in current_member.ar_questions.all(): #Add to attempted and reviewed
         arlist.append(question.questionkey)
+    x = int(Question.objects.count())
     
     data = {
         "reviewQues" : atrlist,
         "attemptedQues" : atalist,
         "unattemptedQues" : atnalist,
-        "reviewAttemptedQues" : arlist
+        "reviewAttemptedQues" : arlist,
+        "numOfQuestions" : x
     }
     return JsonResponse(data)
 
+
+@csrf_exempt
+def delete_response(request):
+    current_member = Member.objects.get(user=request.user)
+    if request.method == "POST":
+        queskey = request.POST.get("queskey")
+        question = Question.objects.get(questionkey=queskey)
+        try:
+            response = Response.objects.filter(question=question, member=current_member)
+            response.delete()
+        except:
+            pass
 
 @csrf_exempt
 #@login_required(login_url='/sign_in')
@@ -277,7 +291,8 @@ def get_question(request, queskey):
             "mcq_flag":False
         }
         return JsonResponse(data)
-        
+
+@csrf_exempt        
 def get_time_remaining(request):
     current_member = Member.objects.get(user=request.user)
     if request.method == "POST":

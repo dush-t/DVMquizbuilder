@@ -171,7 +171,6 @@
 
 .footer-buttons {
     height: 100%;
-    width: 500px;
     text-align: center;
     font-size: 1.2em;
     color: #fff;
@@ -182,7 +181,7 @@
 .footer-buttons > span {
     margin-right: 10px;
     background: #238dd0;
-    padding: 5px 10px;
+    padding: 10px 10px;
     cursor: pointer;
 }
 @media all and (max-width: 500px) {
@@ -247,7 +246,7 @@
     width: 100%;
     display: flex; 
     flex-wrap: wrap;
-    display: flex;
+    justify-content: center;
     height:fit-content;
     background-color: palegreen;
 }
@@ -263,9 +262,9 @@
     margin-top: 15px;
 }
 .question-wrapper .questions{ 
-    height: 60px;
+    height: 55px;
     background: white;
-    width: 60px;
+    width: 55px;
     border-radius: 1px;
     margin: 8px; 
     display: flex;
@@ -293,17 +292,24 @@
     flex-direction: row;
 }
 .items{
-    height: 60px;
-    width: 60px;
+    height: 55px;
+    width: 55px;
     border-radius: 10px;
+    margin: 8px;
     display: flex;
     align-items: center;
     justify-content: space-around;
+    cursor: pointer;
 }
 .attempted{
     -webkit-clip-path: polygon(100% 100%, 100% 36%, 51% 0%, 0 36%, 0 100%, 46% 100%);
     clip-path: polygon(100% 100%, 100% 36%, 51% 0%, 0 36%, 0 100%, 46% 100%);
     background: blue;
+    margin-bottom: 5px;
+}
+.attempted-review{
+    border-radius: 50%;
+    background: yellow;
     margin-bottom: 5px;
 }
 .not-attempted{

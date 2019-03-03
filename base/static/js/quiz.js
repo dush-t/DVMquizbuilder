@@ -1,22 +1,9 @@
 var questionNo= 0;
-sessionStorage.setItem("is_reloaded", true);
 
 
 // ------------------- Timer and Instructions --------------------
 
-var startButton = document.querySelector(".instructions-page .start-button");
 
-function startTimer(){
-    var data = $.ajax( {
-        type: 'POST',
-        url: `/get_time_remaining`,
-        data: {
-        },
-        success: function(data) {             
-        }
-    
-    });
-}
 
 function getTime(){
     var data = $.ajax( {
@@ -33,6 +20,9 @@ function getTime(){
         }
     });    
 }
+
+getTime();
+
 //-----------------------------------------------------------------
 function getQuestionStatus(){
     var data = $.ajax( {
@@ -43,11 +33,11 @@ function getQuestionStatus(){
         
         success: function(data){
             var buttons = document.querySelectorAll(".question-wrapper .questions-container div");
-            console.log(data);
-            console.log(data.attemptedQues);
+            // console.log(data);
+            // console.log(data.attemptedQues);
             for(var i=0; i< data.attemptedQues.length ; i++){
-                console.log("ds");
-                console.log(data.attemptedQues[i]);
+                // console.log("ds");
+                // console.log(data.attemptedQues[i]);
                 attempted(data.attemptedQues[i]);
             } 
             for(var i=0; i< data.unattemptedQues.length ; i++){
@@ -60,22 +50,18 @@ function getQuestionStatus(){
                 //console.log(data.attemptedQues[i]);
                 markForReview(data.reviewQues[i]);
             }
-            for(var i=0; i< data.attemptedQues.length ; i++){
-                console.log("ds");
-                console.log(data.attemptedQues[i]);
-                attempted(data.attemptedQues[i]);
+            for(var i=0; i< data.reviewAttemptedQues.length ; i++){
+                //console.log("ds");
+                //console.log(data.attemptedQues[i]);
+                attempted_review(data.reviewAttemptedQues[i]);
             } 
+            // console.log(data);
         }
     });    
 }
 getQuestionStatus();
 //--------------------------------------------------------------
 
-document.querySelector(".start-button").addEventListener("click", function() {
-    document.querySelector(".instructions-page").style.animation = "fade-instructions 0.2s ease forwards";
-    document.querySelector(".instructions-page").style.zIndex = "0";
-    // document.querySelector(".instructions-page").style.display = "none";
-});
 function setTimer(maxtime_min, secondsLeft){
     var timer= document.getElementById("timer");
     var minutesLeft = maxtime_min;
@@ -96,12 +82,6 @@ function setTimer(maxtime_min, secondsLeft){
     
      },1000);
 }
-document.querySelector(".start-button").addEventListener("click", function() {
-    setTimer(30,0);
-    console.log("Timer called on click");
-    // startquiz();
-});
-document.querySelector(".start-button").addEventListener("click", startTimer);
 // ---------------------------------------------------
 
 function questionDisplay(content){
@@ -146,6 +126,7 @@ function getQuestion(quesNo){
                var radioButton = document.createElement("input");
                radioButton.setAttribute("type","radio");
                radioButton.setAttribute("name","answer");
+               radioButton.setAttribute("onclick","buttonDisplay()");
                radioButton.setAttribute("key",`${data.keys[i]}`);
                if(data.keys[i] == data.marked_answer){
                    console.log(radioButton);
@@ -156,13 +137,19 @@ function getQuestion(quesNo){
                radioHolder.append(radioButton);
                radioHolder.innerHTML+=`${data.answers[i]}`;
                form.appendChild(radioHolder);
-           }            
+            }
+            buttonDisplay();            
         }
     });
      
 }
 getQuestion(questionNo);
 
+window.addEventListener("resize", function (){
+    if(window.innerWidth <= 670){
+        
+    }
+});
 function sendAnswer(quesNo,key){
     var data = $.ajax( {
         type: 'POST',
@@ -189,20 +176,29 @@ function SaveAndNext(){
     var post_key = checked_radio.getAttribute("key");
     return post_key;
 }
+
 var saveAndNext = document.querySelectorAll(".footer-buttons #save-next")[0];
 
 saveAndNext.addEventListener("click",function(){
 var key = SaveAndNext();
 sendAnswer(questionNo , key);
-localStorage.setItem("ans"+questionNo, checkedKey);
 attempted(questionNo);
 doNext();
 });
 
 
+var saveAndReview = document.querySelectorAll(".footer-buttons #save-review")[0];
+saveAndReview.addEventListener("click",function(){
+    var key = SaveAndNext();
+    sendAnswer(questionNo , key);
+    sendAnswer_Review(questionNo , key);
+    attempted_review(questionNo);
+    doNext();
+    });
+
+
 var review = document.querySelectorAll(".footer-buttons #review")[0];
 review.addEventListener("click",function(){
-    console.log("Click");
     sendReview(questionNo);
     markForReview(questionNo);
 });
@@ -211,6 +207,11 @@ function attempted(questionNo){
     var buttons = document.querySelectorAll(".question-wrapper .questions-container div");
     buttons[questionNo].className = "items attempted";
     sendAttempted(questionNo);
+}
+
+function attempted_review(questionNo){
+    var buttons = document.querySelectorAll(".question-wrapper .questions-container div");
+    buttons[questionNo].className = "items attempted-review";
 }
 
 function unattempted(questionNo){
@@ -225,6 +226,19 @@ function markForReview(questionNo){
     sendReview(questionNo);
 }
 
+function sendAnswer_Review(quesNo, key){
+    var data = $.ajax( {
+        type: 'POST',
+        url: '/atar',
+        data: {
+            "queskey" : quesNo,
+            "anskey" : key
+        },
+        success: function(data) {  
+            console.log("sent");           
+        }
+    });
+}
 function sendReview(quesNo){
     var data = $.ajax( {
         type: 'POST',
@@ -273,6 +287,7 @@ function doNext(){
     document.getElementsByClassName("radio_button")[0].innerHTML="";
     document.getElementsByClassName("question-text")[0].innerHTML="";
     getQuestion(questionNo);
+    attempted_unattempted();
 }
 
 var prev = document.querySelectorAll(".footer-buttons #prev")[0];
@@ -306,9 +321,114 @@ document.querySelector("#close-nav").addEventListener("click", () => {
 // hard refresh 
 
 
-if(sessionStorage.getItem("is_reloaded"))
-{
-    console.log("reloaded");
-    // document.querySelector(".instructions-page").style.zIndex = "0";
-    // document.querySelector(".instructions-page").style.opacity = "0";
+
+
+function buttonDisplay(){
+    var prevBtn = document.getElementById("prev");
+    var save_nextBtn = document.getElementById("save-next");
+    var nextBtn = document.getElementById("next");
+    var reviewBtn = document.getElementById("review");
+    var save_reviewBtn = document.getElementById("save-review");
+    var submitBtn = document.getElementById("submit");
+    var clearBtn = document.getElementById("clear");
+    var form = document.querySelectorAll(".questionsView .form .radio_button .div ,input");
+    var attempted = false;
+    for(var i=0; i<form.length ;i++){
+        if(form[i].checked){
+            attempted = true;
+        }
+    }
+
+    if(questionNo == numOfQuestions-1){
+        nextBtn.style.display = "none";
+        save_nextBtn.style.display = "none";
+        reviewBtn.style.display = "inline";
+        save_reviewBtn.style.display = "none";
+        submitBtn.style.display = "none";
+
+        if(attempted){
+            nextBtn.style.display = "none";
+            reviewBtn.style.display = "none";
+            save_nextBtn.style.display = "none";
+            save_reviewBtn.style.display = "none";
+            clearBtn.style.display = "inline";
+            submitBtn.style.display = "inline";
+        }
+        else{
+            save_nextBtn.style.display = "none";
+            save_reviewBtn.style.display = "none";
+            nextBtn.style.display = "none";
+            reviewBtn.style.display = "inline";
+            clearBtn.style.display = "none";
+            submitBtn.style.display = "none";
+        }
+    }
+    else{
+        nextBtn.style.display = "inline";
+        save_nextBtn.style.display = "inline";
+        reviewBtn.style.display = "inline";
+        save_reviewBtn.style.display = "inline";
+        submitBtn.style.display = "none";
+
+        if(attempted){
+            nextBtn.style.display = "none";
+            reviewBtn.style.display = "none";
+            save_nextBtn.style.display = "inline";
+            save_reviewBtn.style.display = "inline";
+            clearBtn.style.display = "inline";
+        }
+        else{
+            save_nextBtn.style.display = "none";
+            save_reviewBtn.style.display = "none";
+            nextBtn.style.display = "inline";
+            reviewBtn.style.display = "inline";
+            clearBtn.style.display = "none";
+        }
+    }
+    if(questionNo == 0)
+        prevBtn.style.display = "none";
+    else
+        prevBtn.style.display = "inline";
 }
+var clear = document.querySelectorAll(".footer-buttons #clear")[0];
+clear.addEventListener("click", clear_response);
+function clear_response(){
+    console.log("run");
+    var form = document.querySelectorAll(".questionsView .form .radio_button .div ,input");
+    for(var i=0; i<form.length ;i++){
+        form[i].checked = false;
+    }
+    buttonDisplay();
+    sendClearResponse(questionNo);
+}
+
+
+function sendClearResponse(quesNo){
+    var data = $.ajax( {
+        type: 'POST',
+        url: '/delete_response',
+        data: {
+            "queskey" : quesNo
+        },
+        success: function(data) {             
+        }
+    });
+}
+
+function attempted_unattempted(){
+    var noAttempt = document.getElementById("attempted");
+    var noUnattempt = document.getElementById("unattempted");
+    var data = $.ajax( {
+        type: 'GET',
+        url: `/gqs`,
+        data: {
+        },
+        
+        success: function(data){
+            var atmpt = data.attemptedQues.length + data.reviewAttemptedQues.length;
+            noAttempt.innerHTML = "ATTEMPTED: " + atmpt;
+            noUnattempt.innerHTML = "UNATTEMPTED: " + (numOfQuestions - atmpt);
+        }
+    });
+}
+attempted_unattempted();
