@@ -17,7 +17,7 @@ import datetime
 #It is better to pass questions as template context
 
 def test(request):
-    return render(request, 'base/reponse.html')
+    return render(request, 'base/leaderboard.html')
 
 def instructions(request):
     return render(request, 'base/instruction.html')
