@@ -25,7 +25,7 @@ SECRET_KEY = '*33rk*zou*=5kj-3@7qsh61if$!fprs33aig9ed44qjq_o^b61'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 AUTHENTICATION_BACKENDS = (
    

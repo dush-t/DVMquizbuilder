@@ -37,6 +37,8 @@ class Question(models.Model):
     review_by = models.ManyToManyField(Member, related_name='marked_for_review', blank=True)
     not_attempted_by = models.ManyToManyField(Member, related_name='not_attempted', blank=True)
     ar_by = models.ManyToManyField(Member, related_name="ar_questions", blank=True)
+    correct_by = models.ManyToManyField(Member, related_name="answered_correctly", blank =True)
+    incorrect_by = models.ManyToManyField(Member, related_name="answered_incorrectly", blank=True)
 
     # Question properties --
     score_increment = models.IntegerField(default=10)

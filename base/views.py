@@ -232,25 +232,32 @@ def leaderboard(request):
     return JsonResponse(data)
 
 @login_required(login_url='/sign_in')
-def result(request):
+def submit(request):
     current_member = Member.objects.get(user=request.user)
     full_response = current_member.full_response.all()
-    if current_member.submitted:
+    if current_member.submitted == False:
+        current_member.submitted = True
         for response in full_response:
             question = response.question
             try:
                 if reponse.answer_mcq.is_correct:
                     current_member.score = current_member.score + question.score_increment
+                    current_member.answered_correctly.add(question)
                 else:
                     current_member.score = current_member.score - question.score_decrement
+                    current_member.answered_incorrectly.add(question)
             except:
                 if response.answer_text == question.answer:
                     current_member.score = current_member.score + question.score_increment
+                    current_member.answered_correctly.add(question)
                 else:
                     current_member.score = current_member.score - question.score_decrement
-        return render(request, 'base/result.html')
+                    current_member.answered_incorrectly.add(question)
+            current_member.save()
+        return HttpResponse(current_member.score)
     else:
-        return render(request, 'base/result.html')
+        return HttpResponse(current_member.score)
+
 
 @login_required(login_url='/sign_in')
 def get_score(request):

@@ -19,5 +19,6 @@ urlpatterns = [
     path("atar", views.add_to_ar, name="add_to_ar"),
     path("gqs", views.get_question_status, name="get_question_status"),
     path("add_question", views.add_question, name="add_question"),
-    path("delete_response", views.delete_response, name="delete_response")
+    path("delete_response", views.delete_response, name="delete_response"),
+    path("submitquiz", views.submit, name="submit_quiz")
 ]
