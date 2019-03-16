@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.models import User
@@ -32,15 +33,24 @@ def sign_in(request):
     else:
         return redirect('/')
 
-# def create_member(request, user):
-#     name = user.first_name + " " + user.last_name
-#     if Member.objects.filter(user=user).exists():
-#         return redirect('/') #Redirect to wherever you want the user to go to after logging in.
-#     else:
-#         new_member = Member(user = user, name=name)
-#         return redirect('/') #Redirect to wherever you want the user to go to after logging in.
+#This view will create a member object assosciated with the user object on log in but only if it does not exist.
+def create_member(request):
+    user = request.user
+    name = user.first_name + " " + user.last_name
+    if Member.objects.filter(user=user).exists():
+        return redirect("/") #Redirect to wherever you want the user to go to after logging in.
+    else:
+        name = user.first_name + " " + user.last_name
+        new_member = Member(user = user, name=name)
+        new_member.save()
+        return redirect("/") #Redirect to wherever you want the user to go to after logging in.
+
+def sign_out(request):
+    logout(request)
+    return HttpResponse("Successfully logged out")
         
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
 @csrf_exempt
 def add_to_review(request):

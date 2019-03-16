@@ -20,5 +20,7 @@ urlpatterns = [
     path("gqs", views.get_question_status, name="get_question_status"),
     path("add_question", views.add_question, name="add_question"),
     path("delete_response", views.delete_response, name="delete_response"),
-    path("submitquiz", views.submit, name="submit_quiz")
+    path("submitquiz", views.submit, name="submit_quiz"),
+    path('memcreate', views.create_member, name="create_member"),
+    path('logout', views.sign_out, name="logout")
 ]

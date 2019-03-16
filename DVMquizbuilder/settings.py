@@ -143,7 +143,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/memcreate'
 SITE_ID = 1
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 SOCIALACCOUNT_PROVIDERS = { 'google': 
