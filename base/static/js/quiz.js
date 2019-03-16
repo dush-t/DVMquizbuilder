@@ -172,6 +172,7 @@ function getQuestion(quesNo){
                 txtBox.addEventListener("input", buttonDisplay);
                 // console.log(data);
             }
+            document.getElementById("user-question-header").innerHTML = "Question: " + (questionNo+1);
             buttonDisplay();            
         }
     });
@@ -422,7 +423,7 @@ function buttonDisplay(){
     if(questionNo == numOfQuestions-1){
         nextBtn.style.display = "none";
         save_nextBtn.style.display = "none";
-        reviewBtn.style.display = "inline";
+        reviewBtn.style.display = "flex";
         save_reviewBtn.style.display = "none";
         submitBtn.style.display = "none";
 
@@ -431,44 +432,44 @@ function buttonDisplay(){
             reviewBtn.style.display = "none";
             save_nextBtn.style.display = "none";
             save_reviewBtn.style.display = "none";
-            clearBtn.style.display = "inline";
-            submitBtn.style.display = "inline";
+            clearBtn.style.display = "flex";
+            submitBtn.style.display = "flex";
         }
         else{
             save_nextBtn.style.display = "none";
             save_reviewBtn.style.display = "none";
             nextBtn.style.display = "none";
-            reviewBtn.style.display = "inline";
+            reviewBtn.style.display = "flex";
             clearBtn.style.display = "none";
             submitBtn.style.display = "none";
         }
     }
     else{
-        nextBtn.style.display = "inline";
-        save_nextBtn.style.display = "inline";
-        reviewBtn.style.display = "inline";
-        save_reviewBtn.style.display = "inline";
+        nextBtn.style.display = "flex";
+        save_nextBtn.style.display = "flex";
+        reviewBtn.style.display = "flex";
+        save_reviewBtn.style.display = "flex";
         submitBtn.style.display = "none";
 
         if(attempted){
             nextBtn.style.display = "none";
             reviewBtn.style.display = "none";
-            save_nextBtn.style.display = "inline";
-            save_reviewBtn.style.display = "inline";
-            clearBtn.style.display = "inline";
+            save_nextBtn.style.display = "flex";
+            save_reviewBtn.style.display = "flex";
+            clearBtn.style.display = "flex";
         }
         else{
             save_nextBtn.style.display = "none";
             save_reviewBtn.style.display = "none";
-            nextBtn.style.display = "inline";
-            reviewBtn.style.display = "inline";
+            nextBtn.style.display = "flex";
+            reviewBtn.style.display = "flex";
             clearBtn.style.display = "none";
         }
     }
     if(questionNo == 0)
         prevBtn.style.display = "none";
     else
-        prevBtn.style.display = "inline";
+        prevBtn.style.display = "flex";
 }
 var clear = document.querySelectorAll(".footer-buttons #clear")[0];
 clear.addEventListener("click", clear_response);

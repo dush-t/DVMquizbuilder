@@ -15,17 +15,20 @@ import os
 import re
 import datetime
 
-#It is better to pass questions as template context
 
-def test(request):
+def leaderboard(request):
     return render(request, 'base/leaderboard.html')
 
 def instructions(request):
     return render(request, 'base/instruction.html')
 
-
+@login_required(login_url='/sign_in')
 def index(request):
-    return render(request, 'base/index.html')
+    current_member = Member.objects.get(user=request.user)
+    if current_member.submitted:
+        return redirect('/leaderboard')
+    else:
+        return render(request, 'base/index.html')
 
 def sign_in(request):
     if request.user.is_anonymous:
@@ -38,16 +41,16 @@ def create_member(request):
     user = request.user
     name = user.first_name + " " + user.last_name
     if Member.objects.filter(user=user).exists():
-        return redirect("/") #Redirect to wherever you want the user to go to after logging in.
+        return redirect("/instructions") #Redirect to wherever you want the user to go to after logging in.
     else:
         name = user.first_name + " " + user.last_name
         new_member = Member(user = user, name=name)
         new_member.save()
-        return redirect("/") #Redirect to wherever you want the user to go to after logging in.
+        return redirect("/instructions") #Redirect to wherever you want the user to go to after logging in.
 
 def sign_out(request):
     logout(request)
-    return HttpResponse("Successfully logged out")
+    return redirect('/sign_in')
         
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -231,15 +234,19 @@ def store_response(request):
                 a.save() 
         return HttpResponse("Answer stored")
 
-def leaderboard(request):
-    leaderboard = Member.objects.order_by('-score')
-    ranklist=[]
-    for member in leaderboard:
-        ranklist.append(member.name)
-    data = {
-        "ranklist":ranklist
-    }
-    return JsonResponse(data)
+def get_leaderboard(request):
+    if current_member.submitted:
+        leaderboard = Member.objects.order_by('-score')
+        ranklist=[]
+        for member in leaderboard:
+            if member.submitted:
+                ranklist.append(member.name)
+        data = {
+            "ranklist":ranklist
+        }
+        return JsonResponse(data)
+    else:
+        return HttpResponse("IDK what to put here")
 
 @login_required(login_url='/sign_in')
 def submit(request):
@@ -252,21 +259,54 @@ def submit(request):
             try:
                 if reponse.answer_mcq.is_correct:
                     current_member.score = current_member.score + question.score_increment
-                    current_member.answered_correctly.add(question)
+                    current_member.answered_correctly.add(response.question)
                 else:
                     current_member.score = current_member.score - question.score_decrement
-                    current_member.answered_incorrectly.add(question)
+                    current_member.answered_icorrectly.add(response.question)
             except:
                 if response.answer_text == question.answer:
                     current_member.score = current_member.score + question.score_increment
-                    current_member.answered_correctly.add(question)
+                    current_member.answered_correctly.add(response.question)
                 else:
                     current_member.score = current_member.score - question.score_decrement
-                    current_member.answered_incorrectly.add(question)
+                    current_member.answered_icorrectly.add(response.question)
             current_member.save()
-        return HttpResponse(current_member.score)
+        return redirect('/submitquiz')
     else:
-        return HttpResponse(current_member.score)
+        return redirect('/result')
+
+
+
+@login_required(login_url='/sign_in')
+def get_result(request):
+    current_member = Member.objects.get(user=request.user)
+    if current_member.submitted:
+        name = current_member.name
+        correct = current_member.answered_correctly.all().count()
+        incorrect = current_member.answered_incorrectly.all().count()
+        unattempted = Question.objects.all().count() - correct - incorrect
+        score = current_member.score
+
+        leaderboard = Member.objects.filter(submitted = True).order_by('-score')
+        rank = 1
+        for member in leaderboard:
+            if not member == current_member:
+                rank = rank + 1
+            else:
+                break
+        
+        data = {
+            'name':name,
+            'correct':correct,
+            'incorrect':incorrect,
+            'unattempted':unattempted,
+            'rank':rank,
+            'score':score
+        }
+        return JsonResponse(data)
+    else:
+        return HttpResponse("You think you're smart?")
+
 
 
 @login_required(login_url='/sign_in')
@@ -403,8 +443,57 @@ def add_question(request):
             # answer = Answer(parent_question=question, content=op1_content, key=1)
             # answer.save()
 
+    ##WAS WRITING CODE FOR SHOWING DETAILED VIEW OF WHICH QUESTIONS WERE ANSWERED CORRECTLY.
 
+    #  responses = current_member.full_response.all()
+    #     correct_list = [] #List of correctly attempted questions' content
+    #     correctans_list = [] #List of answers of questions answered correctly
 
+    #     incorrect_list = [] #Corresponding list for incorrect questions
+    #     incorrectans_list = [] #List of answers of questions answered incorrectly
+        
+    #     none_list = [] #Rest of the questions
+    #     noneans_list = []
+
+    #     for response in responses:
+    #         if response.is_correct == 1:  #Handling questions answered correctly.
+    #             correct_list.append(response.question.content)
+    #             try:
+    #                 ans_list = []
+    #                 val = 1
+    #                 ans_list.append("1")
+    #                 for option in response.question.answers.all():
+    #                     if option.is_correct == False:
+    #                         val = val +1                           
+    #                     ans_list.append(option.content)
+    #                 ans_list.append(val)
+    #                 correctans_list.append(ans_list)
+    #             except:
+    #                 ans_list = []
+    #                 ans_list.append("2")
+    #                 answer = response.question.answer
+    #                 ans_list.append(answer)
+                    
+    #         elif response.is_correct == 2:
+    #             incorrect_list.append(response.question.content)
+    #             try:
+    #                 ans_list = []
+    #                 val1 = 1
+    #                 val2 = 1
+    #                 ans_list.append("1")
+    #                 for option in response.question.answers.all():
+    #                     if option.is_correct == False:
+    #                         val1 = val1 + 1     
+    #                     if not option == response.answer:
+    #                         val2 = val2 + 1                       
+    #                     ans_list.append(option.content)
+    #                 ans_list.append(val1)
+    #                 ans_list.append(val2)
+    #                 incorrectans_list.append(ans_list)
+    #             except:
+    #                 ans_list = []
+    #                 ans_list.append("2")
+    #                 answer = response.answer_text
 
 
 

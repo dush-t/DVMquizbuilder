@@ -12,7 +12,7 @@ urlpatterns = [
     path("leaderboard", views.leaderboard, name="leaderboard"),
     path("sign_in", views.sign_in, name="sign_in"),
     path("store_response", views.store_response, name="store_response"),
-    path("test", views.test, name="test"),
+    path("get_leaderboard", views.get_leaderboard, name="leaderboard"),
     path("atr", views.add_to_review, name="add_to_review"),
     path("atna", views.add_to_not_attempted, name="add_to_not_attempted"),
     path("ata", views.add_to_attempted, name="add_to_attempted"),
@@ -22,5 +22,6 @@ urlpatterns = [
     path("delete_response", views.delete_response, name="delete_response"),
     path("submitquiz", views.submit, name="submit_quiz"),
     path('memcreate', views.create_member, name="create_member"),
-    path('logout', views.sign_out, name="logout")
+    path('logout', views.sign_out, name="logout"),
+    path('get_result', views.get_result, name="get_result")
 ]
