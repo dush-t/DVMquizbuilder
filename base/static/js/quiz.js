@@ -169,7 +169,7 @@ function getQuestion(quesNo){
                 radioHolder.append(radioButton);
                 form.appendChild(radioHolder);
                 var txtBox = document.querySelectorAll(".questionsView .form .radio_button .div ,input")[0];
-                txtBox.addEventListener("change", buttonDisplay);
+                txtBox.addEventListener("input", buttonDisplay);
                 // console.log(data);
             }
             buttonDisplay();            
