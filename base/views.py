@@ -400,9 +400,13 @@ def get_time_remaining(request):
         end_time = start_time + quiz_time
         time_remaining = end_time - datetime.datetime.now(timezone.utc) # A datetime.timedelta object
         
-        #if time_remaining > 1800 or time_remaining < 0:
-        #    return redirect("leaderboard")
+        if time_remaining.seconds > 1800 or time_remaining.seconds < 0:
             
+            data = {
+                "message": "Time is out of range"
+            }
+            return JsonResponse(data)
+        
         data = {
             "time_remaining":time_remaining.seconds,
         }

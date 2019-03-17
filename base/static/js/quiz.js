@@ -11,10 +11,15 @@ function getTime(){
         },
         success: function(data){   
            var obj = JSON.parse;
-           var time = data.time_remaining;
-           var minutes = parseInt(time/60);
-           var seconds = parseInt(time%60);
-           setTimer(minutes,seconds);
+           if (!data.message) {
+               var time = data.time_remaining;
+               var minutes = parseInt(time/60);
+               var seconds = parseInt(time%60);
+               setTimer(minutes,seconds);
+           }
+           else {
+            window.open("/submitquiz", "_self");
+           }
         }
     });    
 }
