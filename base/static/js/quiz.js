@@ -3,8 +3,6 @@ var questionNo= 0;
 
 // ------------------- Timer and Instructions --------------------
 
-
-
 function getTime(){
     var data = $.ajax( {
         type: 'GET',
@@ -382,14 +380,14 @@ function openNav() {
     nav.style.left = "0";
     navCount = 1;
     // var imgURL = '../images/cancel.png';
-    // document.getElementsByClassName("ham")[0].style.background = "url('../images/cancel.png')";
+    document.getElementsByClassName("ham")[0].style.backgroundImage = "url('../images/cancel.png')";
 }
 
 function closeNav() {
     nav.style.left = "-80%";
     navCount = 0;
     // var imgURL = '../images/menu.png';
-    // document.getElementsByClassName("ham")[0].style.background = "url('../images/menu.png')";
+    document.getElementsByClassName("ham")[0].style.background = "url('../images/menu.png')";
 }
 // --------------------------------------------------------
 // hard refresh 
@@ -425,7 +423,6 @@ function buttonDisplay(){
         save_nextBtn.style.display = "none";
         reviewBtn.style.display = "flex";
         save_reviewBtn.style.display = "none";
-        submitBtn.style.display = "none";
 
         if(attempted){
             nextBtn.style.display = "none";
@@ -433,7 +430,6 @@ function buttonDisplay(){
             save_nextBtn.style.display = "none";
             save_reviewBtn.style.display = "none";
             clearBtn.style.display = "flex";
-            submitBtn.style.display = "flex";
         }
         else{
             save_nextBtn.style.display = "none";
@@ -441,7 +437,6 @@ function buttonDisplay(){
             nextBtn.style.display = "none";
             reviewBtn.style.display = "flex";
             clearBtn.style.display = "none";
-            submitBtn.style.display = "none";
         }
     }
     else{
@@ -449,7 +444,6 @@ function buttonDisplay(){
         save_nextBtn.style.display = "flex";
         reviewBtn.style.display = "flex";
         save_reviewBtn.style.display = "flex";
-        submitBtn.style.display = "none";
 
         if(attempted){
             nextBtn.style.display = "none";
@@ -518,3 +512,10 @@ function attempted_unattempted(){
     });
 }
 attempted_unattempted();
+
+
+function submitQuiz(){
+    var submitConfirmation = confirm("Do you really want to submit!");
+    if(submitConfirmation == true)
+    window.open("/submitquiz", "_self");
+}

@@ -1,8 +1,50 @@
-<html>
-    <head><title>lolmao this works</title></head>
-    <body>
-        <p>Welcome</p>
+<!DOCTYPE html>
+<html lang="en">
+{%load static%}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Sign In</title>
+    <link rel="stylesheet" href="{% static 'css/frame.css' %}">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background: url('../../static/images/LandingPage.svg');
+            background-size: cover;
+        }
+        
+        h1 {
+            font-size: 3.5em;
+        }
+        .login {
+            margin-top: 50px;
+            width: 250px;
+            height: 80px;
+            background: #df4930;
+            border-radius: 10px;
+            box-shadow: 5px grey;
+        }
+        
+        .login > a {
+            text-decoration: none;
+            font-size: 1.3em; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+            color: #fff;   
+        }
+    </style>
+</head>
+<body>
+    <h1> Get rECT!! </h1>
+    <div class="login">
         <a class="socialaccount_provider google" title="Google" href="/accounts/google/login/?process=login">Login with Google</a><br>
-
-    </body>
+    </div>
+</body>
 </html>

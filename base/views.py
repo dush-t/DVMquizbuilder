@@ -48,6 +48,7 @@ def create_member(request):
         new_member.save()
         return redirect("/instructions") #Redirect to wherever you want the user to go to after logging in.
 
+@login_required(login_url='/sign_in')
 def sign_out(request):
     logout(request)
     return redirect('/sign_in')
@@ -235,14 +236,18 @@ def store_response(request):
         return HttpResponse("Answer stored")
 
 def get_leaderboard(request):
+    current_member = Member.objects.get(user=request.user)
     if current_member.submitted:
         leaderboard = Member.objects.order_by('-score')
         ranklist=[]
+        scorelist = []
         for member in leaderboard:
             if member.submitted:
                 ranklist.append(member.name)
+                scorelist.append(member.score)
         data = {
-            "ranklist":ranklist
+            "ranklist":ranklist,
+            "scorelist":scorelist
         }
         return JsonResponse(data)
     else:
@@ -257,23 +262,23 @@ def submit(request):
         for response in full_response:
             question = response.question
             try:
-                if reponse.answer_mcq.is_correct:
+                if response.answer_mcq.is_correct:
                     current_member.score = current_member.score + question.score_increment
                     current_member.answered_correctly.add(response.question)
                 else:
                     current_member.score = current_member.score - question.score_decrement
-                    current_member.answered_icorrectly.add(response.question)
+                    current_member.answered_incorrectly.add(response.question)
             except:
                 if response.answer_text == question.answer:
                     current_member.score = current_member.score + question.score_increment
                     current_member.answered_correctly.add(response.question)
                 else:
                     current_member.score = current_member.score - question.score_decrement
-                    current_member.answered_icorrectly.add(response.question)
+                    current_member.answered_incorrectly.add(response.question)
             current_member.save()
         return redirect('/submitquiz')
     else:
-        return redirect('/result')
+        return redirect('/leaderboard')
 
 
 
@@ -394,6 +399,8 @@ def get_time_remaining(request):
         }
 
         return JsonResponse(data)
+
+
 
 @staff_member_required
 def add_question(request):
