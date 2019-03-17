@@ -256,27 +256,32 @@ def get_leaderboard(request):
 @login_required(login_url='/sign_in')
 def submit(request):
     current_member = Member.objects.get(user=request.user)
-    full_response = current_member.full_response.all()
+    
     if current_member.submitted == False:
         current_member.submitted = True
-        for response in full_response:
-            question = response.question
-            try:
-                if response.answer_mcq.is_correct:
-                    current_member.score = current_member.score + question.score_increment
-                    current_member.answered_correctly.add(response.question)
-                else:
-                    current_member.score = current_member.score - question.score_decrement
-                    current_member.answered_incorrectly.add(response.question)
-            except:
-                if response.answer_text == question.answer:
-                    current_member.score = current_member.score + question.score_increment
-                    current_member.answered_correctly.add(response.question)
-                else:
-                    current_member.score = current_member.score - question.score_decrement
-                    current_member.answered_incorrectly.add(response.question)
-            current_member.save()
-        return redirect('/submitquiz')
+        current_member.save()
+        try:
+            full_response = current_member.full_response.all()
+            for response in full_response:
+                question = response.question
+                try:
+                    if response.answer_mcq.is_correct:
+                        current_member.score = current_member.score + question.score_increment
+                        current_member.answered_correctly.add(response.question)
+                    else:
+                        current_member.score = current_member.score - question.score_decrement
+                        current_member.answered_incorrectly.add(response.question)
+                except:
+                    if response.answer_text == question.answer:
+                        current_member.score = current_member.score + question.score_increment
+                        current_member.answered_correctly.add(response.question)
+                    else:
+                        current_member.score = current_member.score - question.score_decrement
+                        current_member.answered_incorrectly.add(response.question)
+                current_member.save()
+            return redirect('/submitquiz')
+        except:
+            return redirect('/leaderboard')
     else:
         return redirect('/leaderboard')
 
@@ -393,7 +398,10 @@ def get_time_remaining(request):
         quiz_time = datetime.timedelta(minutes = 30)
         end_time = start_time + quiz_time
         time_remaining = end_time - datetime.datetime.now(timezone.utc) # A datetime.timedelta object
-
+        
+        #if time_remaining > 1800 or time_remaining < 0:
+        #    return redirect("leaderboard")
+            
         data = {
             "time_remaining":time_remaining.seconds,
         }

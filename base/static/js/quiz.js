@@ -69,7 +69,7 @@ function setTimer(maxtime_min, secondsLeft){
     timer.innerHTML = `${minutesLeft} : 0${secondsLeft}`   
     else
     timer.innerHTML = `${minutesLeft} : ${secondsLeft}`;
-    setInterval(function(){
+    var timer_interval = setInterval(function(){
         if(secondsLeft == 0){
             minutesLeft -= 1;
             secondsLeft = 60;
@@ -80,7 +80,16 @@ function setTimer(maxtime_min, secondsLeft){
         else
         timer.innerHTML = `${minutesLeft} : ${secondsLeft}`;
     
-     },1000);
+        if (minutesLeft < 0 || minutesLeft > 30) {
+            timeout();
+        }
+    },1000);
+    
+    function timeout() {
+        clearInterval(timer_interval);
+        window.open("/submitquiz", "_self");
+        console.log("Still running");
+     }
 }
 // ---------------------------------------------------
 
@@ -379,15 +388,23 @@ document.querySelector(".ham").addEventListener("click", () => {
 function openNav() {
     nav.style.left = "0";
     navCount = 1;
-    // var imgURL = '../images/cancel.png';
-    document.getElementsByClassName("ham")[0].style.backgroundImage = "url('../images/cancel.png')";
+    var ham = document.querySelector(".ham");
+
+    ham.firstElementChild.style.transform = "rotate(45deg)";
+    ham.lastElementChild.style.transform = "rotate(-45deg)";
+    ham.firstElementChild.nextElementSibling.style.opacity = "0";
+    
 }
 
 function closeNav() {
     nav.style.left = "-80%";
     navCount = 0;
-    // var imgURL = '../images/menu.png';
-    document.getElementsByClassName("ham")[0].style.background = "url('../images/menu.png')";
+
+    var ham = document.querySelector(".ham");
+
+    ham.firstElementChild.style.transform = "rotate(0deg)";
+    ham.lastElementChild.style.transform = "rotate(0deg)";
+    ham.firstElementChild.nextElementSibling.style.opacity = "1";
 }
 // --------------------------------------------------------
 // hard refresh 

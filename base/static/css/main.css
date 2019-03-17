@@ -38,7 +38,7 @@
 }
 
 .ham {
-    background: url('../images/menu.png');
+    /* background: url('../images/menu.png'); */
     height: 30px;
     width: 30px;
     background-size: cover;
@@ -417,6 +417,22 @@
     .ham {
         display: block;
         cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .ham > div {
+        width: 29px;
+        transition: 0.3s ease;
+        transform-origin: 0;
+        height: 4px;
+        margin-bottom: 6px;
+        border-radius: 3px;
+        background: black;
+        display: block;
+        z-index: 50;
     }
     .marking-scheme {
         display: none;
