@@ -50,6 +50,7 @@ def create_member(request):
 
 @login_required(login_url='/sign_in')
 def sign_out(request):
+    submit(request)
     logout(request)
     return redirect('/sign_in')
         
