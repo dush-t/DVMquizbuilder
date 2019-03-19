@@ -33,7 +33,12 @@ body {
     border-right: 25px solid #70067b;
     border-left: 5px solid #70067b;
     font-size: 2.4em;
+<<<<<<< HEAD
+    font-family: Arial, sans-serif;
+    font-weight: 800;
+=======
     font-family: "Mont-bold", sans-serif;
+>>>>>>> 13a6846d5b1690e2cb5d66fac139813aebcf1bae
 }
 
 .logout-button {
@@ -107,8 +112,13 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+<<<<<<< HEAD
+    padding-top: 70px;
+    height: 70%;
+=======
     padding-top: 150px;
     height: 100%;
+>>>>>>> 13a6846d5b1690e2cb5d66fac139813aebcf1bae
     width: 40%;
     font-size: 13em;
     color: rgb(68, 66, 66);
@@ -124,17 +134,39 @@ h1 {
 .display-leaderboard {
     width: 99.5%;
     border: 2px solid grey;
+<<<<<<< HEAD
+    border-collapse: collapse;
+    margin-left: 3px;
+=======
+>>>>>>> 13a6846d5b1690e2cb5d66fac139813aebcf1bae
 }
 tr, td {
     padding: 0;
     margin: 0;
     color: rgb(68, 66, 66);
+<<<<<<< HEAD
+    font-size: 1.25em;
+}
+td{
+    border: black 1px solid;
+=======
     font-size: 1em;
+>>>>>>> 13a6846d5b1690e2cb5d66fac139813aebcf1bae
 }
 
 tr :nth-of-type(1), tr :nth-of-type(2), tr :nth-of-type(3) {
     color: #000;
+<<<<<<< HEAD
+    font-size: 1.15em;
+}
+table tr:nth-of-type(even){
+    background: rgb(192, 187, 187);
+}
+table tbody:nth-of-type(1) tr:nth-of-type(1){
+    background: rgb(192, 187, 187);
+=======
     font-size: 2em;
+>>>>>>> 13a6846d5b1690e2cb5d66fac139813aebcf1bae
 }
 
 
@@ -166,7 +198,23 @@ tr :nth-of-type(1), tr :nth-of-type(2), tr :nth-of-type(3) {
     
     h1 {
         font-size: 0.25em;
+<<<<<<< HEAD
+    } 
+    tr, td {
+        padding: 0;
+        margin: 0;
+        color: rgb(68, 66, 66);
+        font-size: 0.75em;
+    }
+    
+    tr :nth-of-type(1), tr :nth-of-type(2), tr :nth-of-type(3) {
+        color: #000;
+        font-size: 1.5em;
+    } 
+
+=======
     }    
+>>>>>>> 13a6846d5b1690e2cb5d66fac139813aebcf1bae
 }
 
 
