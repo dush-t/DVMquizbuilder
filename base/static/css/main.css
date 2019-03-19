@@ -110,7 +110,7 @@
 .footer-buttons {
     height: 100%;
     text-align: center;
-    font-size: 1.2em;
+    font-size: 1em;
     color: #fff;
     align-items: center;
     margin-left: 10px;
@@ -447,7 +447,7 @@
         width: 100%;
         justify-content: space-evenly;
         margin-left: 0;
-        font-size: 1em;
+        font-size: 0.7em;
     }
 
 
