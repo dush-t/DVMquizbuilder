@@ -27,12 +27,8 @@
     border-right: 25px solid #70067b;
     border-left: 5px solid #70067b;
     font-size: 2.4em;
-<<<<<<< HEAD
     font-family: Arial, sans-serif;
     font-weight: 800;
-=======
-    font-family: "Mont-bold", sans-serif;
->>>>>>> 13a6846d5b1690e2cb5d66fac139813aebcf1bae
 }
 .user-area-header {
     width: 100%;
@@ -204,11 +200,6 @@
     flex-wrap: wrap;
     justify-content: center;
     height:fit-content;
-<<<<<<< HEAD
-=======
-    background-color: palegreen;
-    overflow-y: scroll;
->>>>>>> 13a6846d5b1690e2cb5d66fac139813aebcf1bae
 }
 .question-wrapper .questions-div{
     clear: both;
