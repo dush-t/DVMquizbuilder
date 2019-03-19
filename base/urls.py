@@ -6,6 +6,7 @@ from django.conf.urls import url, include
 urlpatterns = [
     path("", views.index, name="index"),
     path("instructions", views.instructions, name="instructions"),
+    path("get_no_of_questions", views.get_no_of_questions, name="get_no_of_questions"),
     path("get_question/<int:queskey>", views.get_question, name="get_question"),
     path("get_score", views.get_score, name="get_score"),
     path("get_time_remaining", views.get_time_remaining, name="get_time_remaining"),
