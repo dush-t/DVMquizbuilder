@@ -24,6 +24,10 @@ class Member(models.Model):
         return self.name
 
 
+class Day(models.Model):
+    number = models.IntegerField(default=0)
+
+
 class Question(models.Model):
 
     # Question content --

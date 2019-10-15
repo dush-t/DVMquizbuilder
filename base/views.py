@@ -1,4 +1,4 @@
-from .models import Member, Question, Answer, Response
+from .models import Member, Question, Answer, Response, Day
 from .forms import AddQuestion
 
 from django.utils import timezone
@@ -175,6 +175,13 @@ def get_no_of_questions(request):
         "no_of_questions": no_of_questions
     }
     return JsonResponse(data)
+
+
+@csrf_exempt
+def get_day(request):
+    day = Day.objects.all()[0]
+    number = day.number
+    return JsonResponse({"number": number})
 
 
 @csrf_exempt

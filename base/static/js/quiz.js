@@ -1,4 +1,18 @@
-var questionNo= 0;
+var questionNo = 0;
+var base = 0
+
+const fetchData = async (endpoint) => {
+    let response = await fetch(endpoint);
+    let data = await response.json();
+    return data;
+}
+
+fetchData('/get_day')
+    .then((data) => {
+        console.log('da')
+        base = parseInt(data.number) * 100
+        console.log(base)
+    })
 
 
 // ------------------- Timer and Instructions --------------------
@@ -130,7 +144,7 @@ function navQues(quesNo)
 function getQuestion(quesNo){   
     var data = $.ajax( {
         type: 'GET',
-        url: `/get_question/${quesNo}`,
+        url: `/get_question/${base + quesNo}`,
         data: {
         },
         success: function(data) {
@@ -261,9 +275,9 @@ var saveAndReview = document.querySelectorAll(".footer-buttons #save-review")[0]
 saveAndReview.addEventListener("click",function(){
     var key = SaveAndNext();
     sendAnswer(questionNo , key);
-    sendAnswer_Review(questionNo , key);
+    sendAnswer_Review(questionNo , key);    
     attempted_review(questionNo);
-    doNext();
+    doNext();   
     });
 
 
